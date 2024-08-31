@@ -62,8 +62,8 @@ class SYSTEM_MSGS(Enum):
 
 class EXAMPLE_USER_QUERIES(Enum):
     NONEXISTENT_CLIENT_VERSION = """
-    "How do I connect to Weaviate with the v6 Python client?"
+    How do I connect to Weaviate with the v6 Python client?
     """
     CONNECT_AND_RUN_HYBRID_SEARCH = """
-    "How do I connect to a local Weaviate instance, and run a hybrid search, with the v4 Python client API?"
+    How do I connect to a local Weaviate instance, and run a hybrid search, with the v4 Python client API?
     """

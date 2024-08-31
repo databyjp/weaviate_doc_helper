@@ -53,7 +53,7 @@ def get_queries(original_query: str) -> List[str]:
         model=CLAUDE_MODEL,
         sp=SYSTEM_MSGS.SEARCH_QUERY_PARSER.value,
         tools=[_format_extracted_queries],
-        tool_choice="_format_extracted_queries"
+        tool_choice="_format_extracted_queries",
     )
 
     r: Message = chat(prompt)
@@ -67,13 +67,13 @@ def filter_search_results():
 
 def _response_obj_to_str(response_obj) -> str:
     """Convert a response object to a string."""
-    response_text = f'''
+    response_text = f"""
     <file_path>{response_obj.properties["filepath"]}</file_path>
     <chunk>{response_obj.properties["chunk"]}</chunk>
     <chunk_no>{response_obj.properties["chunk_no"]}</chunk_no>
     <document_type>{response_obj.properties["doctype"]}</document_type>
     <lines>L{response_obj.properties["line_start"]}-L{response_obj.properties["line_end"]}</lines>
-    '''
+    """
     return response_text
 
 

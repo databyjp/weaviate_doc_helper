@@ -23,7 +23,7 @@ def _get_search_query(user_query: str) -> str:
         model=CLAUDE_MODEL,
         sp=SYSTEM_MSGS.HYBRID_SEARCH_QUERY_WRITER.value,
         tools=[_format_query],
-        tool_choice="_format_query"
+        tool_choice="_format_query",
     )
 
     r: Message = chat(prompt)
@@ -32,7 +32,6 @@ def _get_search_query(user_query: str) -> str:
         if isinstance(response, ToolUseBlock):
             return response.input["query"]
     return ""
-
 
 
 def _marker_based_chunking(src_text: str, markers: List[str]) -> List[str]:

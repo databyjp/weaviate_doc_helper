@@ -63,6 +63,7 @@ def _search_text(query: str) -> List[str]:
     """
     return _search_generic(query, "text")
 
+
 def _search_code(query: str) -> List[str]:
     """
     Search Weaviate documentation code examples.
@@ -74,6 +75,7 @@ def _search_code(query: str) -> List[str]:
         A list of strings from the documentation code examples.
     """
     return _search_generic(query, "code")
+
 
 def _search_any(query: str) -> List[str]:
     """
