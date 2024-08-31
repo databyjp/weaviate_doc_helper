@@ -11,6 +11,7 @@ authors = [{name = "JP Hwang", email = "me@jphwang.com"}]
 [project.scripts]
 ask_llm = "weaviate_helper.coder:ask_llm"
 ask_basic_ragbot = "weaviate_helper.coder:ask_basic_ragbot"
+ask_ragbot_with_tools = "weaviate_helper.coder:ask_ragbot_with_tools"
 
 [tool.setuptools.packages.find]
 where = ["src"]
