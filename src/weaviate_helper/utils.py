@@ -1,13 +1,41 @@
-import os
-import weaviate
-from weaviate import WeaviateClient
 from typing import List
 from dataclasses import dataclass
 from typing import List, Iterable
 from pathlib import Path
+from anthropic.types.text_block import TextBlock
+from anthropic.types.tool_use_block import ToolUseBlock
+from anthropic.types import Message
+from .setup import CLAUDE_MODEL
+from .prompts import SYSTEM_MSGS
+from .tools import _format_query
+import claudette
 
 
-def marker_based_chunking(src_text: str, markers: List[str]) -> List[str]:
+def _get_search_query(user_query: str) -> str:
+    prompt = f"""
+    The user has asked the following question:
+    <query>{user_query}</query>
+    Please provide a search query that we can use
+    to search for text or code chunks related to the original query.
+    """
+
+    chat = claudette.Chat(
+        model=CLAUDE_MODEL,
+        sp=SYSTEM_MSGS.HYBRID_SEARCH_QUERY_WRITER.value,
+        tools=[_format_query],
+        tool_choice="_format_query"
+    )
+
+    r: Message = chat(prompt)
+
+    for response in r.content:
+        if isinstance(response, ToolUseBlock):
+            return response.input["query"]
+    return ""
+
+
+
+def _marker_based_chunking(src_text: str, markers: List[str]) -> List[str]:
     chunks = [src_text]
     for m in markers:
         new_chunks = []
@@ -34,7 +62,7 @@ def chunk_text(src_text: str, filepath: str) -> List[Chunk]:
     Split a text into chunks based on markdown headers
     """
     markers = ["\n\n##"]
-    raw_chunks = marker_based_chunking(src_text, markers)
+    raw_chunks = _marker_based_chunking(src_text, markers)
 
     chunks = []
     for i, chunk in enumerate(raw_chunks):
@@ -54,14 +82,14 @@ def chunk_text(src_text: str, filepath: str) -> List[Chunk]:
     return chunks
 
 
-def chunk_doc_code_example(src_text: str, filepath: str) -> List[Chunk]:
+def _chunk_doc_code_example(src_text: str, filepath: str) -> List[Chunk]:
     """
     Split a code file into chunks based on class and function definitions
     """
     separators = [
         "# END ",
     ]
-    raw_chunks = marker_based_chunking(src_text, separators)
+    raw_chunks = _marker_based_chunking(src_text, separators)
 
     chunks = []
     for i, chunk in enumerate(raw_chunks):
@@ -81,7 +109,7 @@ def chunk_doc_code_example(src_text: str, filepath: str) -> List[Chunk]:
     return chunks
 
 
-def process_directories(
+def _process_directories(
     directories: List[str],
     file_pattern: str,
     chunk_function,
@@ -97,10 +125,10 @@ def process_directories(
 
 
 def get_code_chunks(directories: List[str]) -> Iterable[Chunk]:
-    return process_directories(
-        directories, "*.py", chunk_doc_code_example, exclude_pattern="v3.py"
+    return _process_directories(
+        directories, "*.py", _chunk_doc_code_example, exclude_pattern="v3.py"
     )
 
 
 def get_doc_chunks(directories: List[str]) -> Iterable[Chunk]:
-    return process_directories(directories, "*.md*", chunk_text)
+    return _process_directories(directories, "*.md*", chunk_text)

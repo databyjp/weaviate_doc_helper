@@ -10,6 +10,14 @@ class SYSTEM_MSGS(Enum):
 
     Think before you write the answer in <thinking> tags.
     """
+    HYBRID_SEARCH_QUERY_WRITER = """
+    You are an AI assistant with expertise in Weaviate and vector search.
+
+    You are to write a hybrid search query for the user to run in Weaviate
+    to find relevant information for their query.
+
+    Think before you write the answer in <thinking> tags.
+    """
 
 
 class EXAMPLE_USER_QUERIES(Enum):
