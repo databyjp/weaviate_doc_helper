@@ -6,3 +6,4 @@ AI-powered helper app for using Weaviate, with a twist:
 
 Try it out on different branches:
 - `llm-only`: LLM-only, no additional help.
+- `rag-basic`: RAG using basic retrieval.

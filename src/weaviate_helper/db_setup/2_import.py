@@ -1,0 +1,67 @@
+from weaviate_helper.utils import get_code_chunks, get_doc_chunks
+from weaviate_helper.db import connect_to_weaviate
+from weaviate_helper.setup import COLLECTION_NAME
+from weaviate.util import generate_uuid5
+
+
+code_directories = [
+    "data/weaviate-io/code/connections",
+    "data/weaviate-io/code/howto",
+    "data/weaviate-io/code/starter-guides",
+]
+doc_directories = [
+    "data/weaviate-io/docs/concepts",
+    "data/weaviate-io/docs/config-refs",
+    "data/weaviate-io/docs/configuration",
+    "data/weaviate-io/docs/manage-data",
+    "data/weaviate-io/docs/search",
+    "data/weaviate-io/docs/starter-guides",
+]
+
+
+code_chunks = get_code_chunks(code_directories)
+doc_chunks = get_doc_chunks(doc_directories)
+
+
+client = connect_to_weaviate()
+
+chunks = client.collections.get(COLLECTION_NAME)
+
+with chunks.batch.fixed_size(batch_size=100) as batch:
+    for c in code_chunks:
+        batch.add_object(
+            properties={
+                "chunk": c.chunk,
+                "chunk_no": c.chunk_no,
+                "filepath": str(c.filepath),
+                "doctype": c.doctype,
+                "line_start": c.line_start,
+                "line_end": c.line_end,
+            },
+            uuid=generate_uuid5(c.chunk + str(c.filepath) + str(c.chunk_no)),
+        )
+        if batch.number_errors > 50:
+            print("Too many errors, stopping")
+            break
+
+    for c in doc_chunks:
+        batch.add_object(
+            properties={
+                "chunk": c.chunk,
+                "chunk_no": c.chunk_no,
+                "filepath": str(c.filepath),
+                "doctype": c.doctype,
+                "line_start": c.line_start,
+                "line_end": c.line_end,
+            },
+            uuid=generate_uuid5(c.chunk + str(c.filepath) + str(c.chunk_no)),
+        )
+        if batch.number_errors > 50:
+            print("Too many errors, stopping")
+            break
+
+
+if len(chunks.batch.failed_objects) > 0:
+    print(chunks.batch.failed_objects[:3])
+
+client.close()

@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "weaviate_helper"
+version = "0.0.1"
+description = "Demo project for sometimes (poorly) generating Python code for Weaviate"
+authors = [{name = "JP Hwang", email = "me@jphwang.com"}]
+
+[project.scripts]
+ask_llm = "weaviate_helper.coder:ask_llm"
+ask_basic_ragbot = "weaviate_helper.coder:ask_basic_ragbot"
+
+[tool.setuptools.packages.find]
+where = ["src"]
