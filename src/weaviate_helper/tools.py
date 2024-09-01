@@ -1,6 +1,17 @@
 # File: src/weaviate_helper/tools.py
 from .db import _search_generic
 from typing import List
+from anthropic.types import Message
+from anthropic.types.text_block import TextBlock
+from anthropic.types.tool_use_block import ToolUseBlock
+from .setup import CLAUDE_MODEL, get_logger
+from .prompts import SYSTEM_MSGS
+import claudette
+import logging
+
+
+logger = get_logger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 def _format_query_validity(
@@ -18,6 +29,21 @@ def _format_query_validity(
         "is_valid": is_valid,
         "reason": reason,
     }
+
+
+def _format_decomposed_query(
+    queries: List[str],
+) -> List[str]:
+    """
+    Format & display a list of one or more sub-queries.
+
+    Args:
+        queries: The list of one or more sub-queries.
+    Returns:
+        A list of one or more sub-queries.
+        It could be just the original query as a list of one element, or a list of multiple queries.
+    """
+    return [queries]
 
 
 def _format_query(
@@ -105,3 +131,43 @@ def _search_any(query: str) -> List[str]:
         A list of strings from the documentation.
     """
     return _search_generic(query, "any")
+
+
+def _decompose_search_query(user_query: str) -> List[str]:
+    """
+    Decompose a query into a list of sub-queries.
+    This can be useful where a search query may comprise multiple ideas or concepts.
+    Then, you can perform a search for each sub-query, and combine the results.
+
+    Args:
+        query: The query string.
+    Returns:
+        A list of smaller, more focused queries.
+    """
+    prompt = f"""
+    The user want the following question to be answered.
+    <user_query>{user_query}</user_query>
+    We want to perform searches to find related documentation and code snippets.
+    Would we be better served by searching for multiple, more focused queries?
+
+    If so, please provide a list of sub-queries.
+    """
+
+    chat = claudette.Chat(
+        model=CLAUDE_MODEL,
+        sp=SYSTEM_MSGS.SEARCH_QUERY_DECOMPOSER.value,
+        tools=[_format_decomposed_query],
+    )
+
+    r: Message = chat(prompt)
+
+    for block in r.content:
+        if isinstance(block, TextBlock):
+            logger.debug(f"TextBlock: {block.text}")
+        elif isinstance(block, ToolUseBlock):
+            logger.debug(f"Using tool: {block.name}")
+            logger.debug(f"Tool input: {block.input}")
+            return block.input["queries"]
+
+    logger.debug("No tool use block found, returning the original query.")
+    return [user_query]

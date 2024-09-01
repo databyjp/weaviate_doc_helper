@@ -59,6 +59,19 @@ class SYSTEM_MSGS(Enum):
 
     Think before you write the answer in <thinking> tags.
     """
+    SEARCH_QUERY_DECOMPOSER = """
+    You are an AI assistant with expertise in Weaviate and vector search.
+
+    You are to decide whether to decompose a user's proposed query
+    into multiple sub-queries.
+
+    These query terms will be used for searching a vector database
+    containing chunks of text and code examples from Weaviate documentation.
+
+    If so, you are to provide the sub-queries.
+
+    Think before you write the answer in <thinking> tags.
+    """
     SAFETY_AGENT = """
     You are an AI assistant with expertise in cyber safety and security.
     You can help users determine whether a query is potentially malicious,
@@ -75,4 +88,7 @@ class EXAMPLE_USER_QUERIES(Enum):
     """
     CONNECT_AND_RUN_HYBRID_SEARCH = """
     How do I connect to a local Weaviate instance, and run a hybrid search, with the v4 Python client API?
+    """
+    COMPLEX_WEAVIATE_QUERY = """
+    How do I connect to a local Weaviate instance and set up a multi-tenant collection with the ollama vectorizer and an openai generative module? Then how can I run a hybrid search on the collection and see the search result scores? Also, how do the hybrid search results get combined together? The examples should use the v4 Python client API.
     """

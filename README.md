@@ -21,3 +21,8 @@ e.g.:
 1. Clone the `weaviate-io` repo into `data` folder
 1. Run a Weaviate instance (e.g. with Docker)
 1. Run the files in `src/weaviate_helper/db_setup` to ingest data
+
+## Notes:
+
+- LLM almost always refuses to decompose a query into sub-queries, regardless of how complex the query is.
+    -

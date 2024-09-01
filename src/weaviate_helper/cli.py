@@ -1,6 +1,6 @@
 # File: src/weaviate_helper/cli.py
 import click
-from .coder import ask_llm_base
+from .coder import ask_llm_base, ask_llm_final
 from .prompts import SYSTEM_MSGS
 from anthropic.types import Message
 from anthropic.types.text_block import TextBlock
@@ -21,7 +21,9 @@ def process_response(r: Message):
     "--user-query", prompt="Enter your query", help="The user query for code generation"
 )
 def ask_llm(user_query: str):
-    r = ask_llm_base(user_query, SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT.value)
+    r = ask_llm_base(
+        user_query, SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT.value, log_to_file=True
+    )
     process_response(r)
 
 
@@ -31,7 +33,10 @@ def ask_llm(user_query: str):
 )
 def ask_basic_ragbot(user_query: str):
     r = ask_llm_base(
-        user_query, SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT.value, use_search=True
+        user_query,
+        SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT.value,
+        use_search=True,
+        log_to_file=True,
     )
     process_response(r)
 
@@ -46,6 +51,7 @@ def ask_ragbot_with_reformulation(user_query: str):
         SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT.value,
         use_search=True,
         use_reformulation=True,
+        log_to_file=True,
     )
     process_response(r)
 
@@ -56,7 +62,10 @@ def ask_ragbot_with_reformulation(user_query: str):
 )
 def ask_ragbot_with_tools(user_query: str):
     r = ask_llm_base(
-        user_query, SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT_WITH_TOOLS.value, use_tools=True
+        user_query,
+        SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT_WITH_TOOLS.value,
+        use_tools=True,
+        log_to_file=True,
     )
     process_response(r)
 
@@ -71,5 +80,21 @@ def safely_ask_ragbot_with_tools(user_query: str):
         SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT_WITH_TOOLS.value,
         use_tools=True,
         safety_check=True,
+        log_to_file=True,
+    )
+    process_response(r)
+
+
+@click.command()
+@click.option(
+    "--user-query", prompt="Enter your query", help="The user query for code generation"
+)
+def ask_weaviate_agent(user_query: str):
+    r = ask_llm_final(
+        user_query,
+        SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT_WITH_TOOLS.value,
+        use_tools=True,
+        safety_check=True,
+        log_to_file=True,
     )
     process_response(r)

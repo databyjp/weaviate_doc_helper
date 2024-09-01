@@ -8,6 +8,7 @@ from .tools import (
     _search_any,
     _search_code,
     _search_text,
+    _decompose_search_query,
 )
 from .utils import _formulate_one_search_query, _validate_query, _log_claude_to_file
 import logging
@@ -79,6 +80,9 @@ def ask_llm_base(
     processed_query = (
         _formulate_one_search_query(user_query) if use_reformulation else user_query
     )
+
+    # Only use the search here if we are not using tool calling.
+    # If using tool calling, the LLM will perform the search(es) itself.
     search_results = (
         _search_any(processed_query) if use_search or use_reformulation else ""
     )
@@ -102,6 +106,60 @@ def ask_llm_base(
             use_reformulation,
             processed_query,
             search_results,
+            r,
+        )
+
+    logger.debug(f"Response: {r}")
+    return r
+
+
+def ask_llm_final(
+    user_query: str,
+    system_prompt,
+    use_search=False,
+    use_reformulation=False,
+    use_tools=False,
+    max_steps=5,
+    log_to_file=False,
+    safety_check=False,
+) -> Message:
+    if safety_check:
+        validity_assessment = _validate_query(user_query)
+        if not validity_assessment["is_valid"]:
+            logger.debug(f"Query '{user_query}' is not validated to continue.")
+            logger.debug(f"Reason: {validity_assessment['reason']}")
+            raise ValueError(f"Query '{user_query}' is not validated to continue.")
+
+    decomposed_queries = _decompose_search_query(user_query)
+
+    prompt = f"""
+    The user has asked the following question:
+    <user_query>{user_query}</user_query>
+
+    Please answer the question, using the array of tools included.
+
+    If you would like to perform searches,
+    we suggest using the following search queries:
+    <search_queries>{decomposed_queries}</search_queries>
+    """
+    logger.debug(f"Prompt: {prompt}")
+
+    tools = get_tools(use_tools)
+    chat = claudette.Chat(model=CLAUDE_MODEL, sp=system_prompt, tools=tools)
+
+    if use_tools:
+        r: Message = chat.toolloop(prompt, max_steps=max_steps)
+    else:
+        r: Message = chat(prompt)
+
+    if log_to_file:
+        _log_claude_to_file(
+            user_query,
+            use_tools,
+            use_search,
+            use_reformulation,
+            ";".join(decomposed_queries),
+            None,
             r,
         )
 

@@ -8,10 +8,10 @@ from anthropic.types.text_block import TextBlock
 from anthropic.types.tool_use_block import ToolUseBlock
 from .setup import CLAUDE_MODEL, get_logger, CLAUDE_LOGFILE
 from .prompts import SYSTEM_MSGS
-from .tools import _format_query, _format_query_validity
+from .tools import _format_query, _format_query_validity, _format_decomposed_query
 import claudette
-import logging
 from datetime import datetime
+import logging
 
 
 logger = get_logger(__name__)
