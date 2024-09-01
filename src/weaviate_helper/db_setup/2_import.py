@@ -5,17 +5,17 @@ from weaviate.util import generate_uuid5
 
 
 code_directories = [
-    "data/weaviate-io/code/connections",
-    "data/weaviate-io/code/howto",
-    "data/weaviate-io/code/starter-guides",
+    "data/weaviate-io/_includes/code/connections",
+    "data/weaviate-io/_includes/code/howto",
+    "data/weaviate-io/_includes/code/starter-guides",
 ]
 doc_directories = [
-    "data/weaviate-io/docs/concepts",
-    "data/weaviate-io/docs/config-refs",
-    "data/weaviate-io/docs/configuration",
-    "data/weaviate-io/docs/manage-data",
-    "data/weaviate-io/docs/search",
-    "data/weaviate-io/docs/starter-guides",
+    "data/weaviate-io/developers/weaviate/concepts",
+    "data/weaviate-io/developers/weaviate/config-refs",
+    "data/weaviate-io/developers/weaviate/configuration",
+    "data/weaviate-io/developers/weaviate/manage-data",
+    "data/weaviate-io/developers/weaviate/search",
+    "data/weaviate-io/developers/weaviate/starter-guides",
 ]
 
 
