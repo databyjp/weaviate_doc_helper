@@ -18,7 +18,7 @@ logger = get_logger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-def get_tools(use_tools: bool) -> Optional[List[str]]:
+def get_tools(use_tools: bool = True) -> Optional[List[str]]:
     return (
         [_get_weaviate_connection_snippet, _search_text, _search_code]
         if use_tools
@@ -90,8 +90,7 @@ def ask_llm_base(
     prompt = generate_prompt(user_query, use_search, use_reformulation, search_results)
     logger.debug(f"Prompt: {prompt}")
 
-    tools = get_tools(use_tools)
-    chat = claudette.Chat(model=CLAUDE_MODEL, sp=system_prompt, tools=tools)
+    chat = claudette.Chat(model=CLAUDE_MODEL, sp=system_prompt, tools=get_tools(use_tools))
 
     if use_tools:
         r: Message = chat.toolloop(prompt, max_steps=max_steps)
@@ -113,19 +112,16 @@ def ask_llm_base(
     return r
 
 
-def ask_llm_final(
+def _ask_weaviate_agent(
     user_query: str,
     system_prompt,
     max_steps=5,
-    log_to_file=True,
-    safety_check=True,
 ) -> Message:
-    if safety_check:
-        validity_assessment = _validate_query(user_query)
-        if not validity_assessment["is_valid"]:
-            logger.debug(f"Query '{user_query}' is not validated to continue.")
-            logger.debug(f"Reason: {validity_assessment['reason']}")
-            raise ValueError(f"Query '{user_query}' is not validated to continue.")
+    validity_assessment = _validate_query(user_query)
+    if not validity_assessment["is_valid"]:
+        logger.debug(f"Query '{user_query}' is not validated to continue.")
+        logger.debug(f"Reason: {validity_assessment['reason']}")
+        raise ValueError(f"Query '{user_query}' is not validated to continue.")
 
     decomposed_queries = _decompose_search_query(user_query)
 
@@ -141,18 +137,16 @@ def ask_llm_final(
     """
     logger.debug(f"Prompt: {prompt}")
 
-    tools = get_tools(use_tools=True)
-    chat = claudette.Chat(model=CLAUDE_MODEL, sp=system_prompt, tools=tools)
+    chat = claudette.Chat(model=CLAUDE_MODEL, sp=system_prompt, tools=get_tools())
 
     r: Message = chat.toolloop(prompt, max_steps=max_steps)
 
-    if log_to_file:
-        _log_claude_to_file(
-            user_query=user_query,
-            use_tools=True,
-            search_query=";".join(decomposed_queries),
-            response=r,
-        )
+    _log_claude_to_file(
+        user_query=user_query,
+        use_tools=True,
+        search_query=";".join(decomposed_queries),
+        response=r,
+    )
 
     logger.debug(f"Response: {r}")
     return r

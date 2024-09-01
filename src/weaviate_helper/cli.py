@@ -1,6 +1,6 @@
 # File: src/weaviate_helper/cli.py
 import click
-from .coder import ask_llm_base, ask_llm_final
+from .coder import ask_llm_base, _ask_weaviate_agent
 from .prompts import SYSTEM_MSGS
 from anthropic.types import Message
 from anthropic.types.text_block import TextBlock
@@ -90,10 +90,8 @@ def safely_ask_ragbot_with_tools(user_query: str):
     "--user-query", prompt="Enter your query", help="The user query for code generation"
 )
 def ask_weaviate_agent(user_query: str):
-    r = ask_llm_final(
+    r = _ask_weaviate_agent(
         user_query,
         SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT_WITH_TOOLS.value,
-        log_to_file=True,
-        safety_check=True,
     )
     process_response(r)
