@@ -1,18 +1,26 @@
+# File: src/weaviate_helper/db.py
 import weaviate
 from weaviate import WeaviateClient
 import os
 from typing import List, Literal
 import claudette
 from anthropic.types import Message
-from .setup import CLAUDE_MODEL, COLLECTION_NAME
+from .setup import CLAUDE_MODEL, COLLECTION_NAME, get_logger
 from .prompts import SYSTEM_MSGS
 from weaviate.classes.query import Filter
+import logging
+
+
+logger = get_logger(__name__)
+logger.setLevel(logging.DEBUG)
+
 
 
 def connect_to_weaviate() -> WeaviateClient:
     cohere_apikey = os.environ["COHERE_APIKEY"]
     openai_apikey = os.environ["OPENAI_APIKEY"]
 
+    logger.debug("Connecting to Weaviate...")
     client = weaviate.connect_to_local(
         port=8280,
         grpc_port=50251,
@@ -75,7 +83,13 @@ def _response_obj_to_str(response_obj) -> str:
 
 
 def _search_generic(query: str, doctype: Literal["code", "text", "any"]) -> List[str]:
-    """Perform a generic search on Weaviate."""
+    """Search for a query in Weaviate.
+
+    Args:
+        query: The query to search for.
+        doctype: The type of document to search for. (Used to filter the search results.)
+    """
+    logger.debug(f"Searching for query: {query} in Weaviate, in doctype: {doctype}")
     with connect_to_weaviate() as weaviate_client:
         collection = weaviate_client.collections.get(COLLECTION_NAME)
 
@@ -87,8 +101,10 @@ def _search_generic(query: str, doctype: Literal["code", "text", "any"]) -> List
         response = collection.query.hybrid(
             query=query,
             filters=filter,
-            limit=2,
+            limit=3,
             alpha=0.5,
             target_vector="chunk",
         )
-    return [_response_obj_to_str(o) for o in response.objects]
+    logger.debug(f"Search results: {response}")
+    response_text = [_response_obj_to_str(o) for o in response.objects]
+    return response_text

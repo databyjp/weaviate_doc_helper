@@ -1,3 +1,4 @@
+# File: src/weaviate_helper/cli.py
 import click
 from .coder import ask_llm_base
 from .prompts import SYSTEM_MSGS

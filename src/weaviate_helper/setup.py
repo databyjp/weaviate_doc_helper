@@ -1,12 +1,10 @@
 # Filepath: /src/weaviate_helper/setup.py
-import os
-import sys
 import logging
 from logging.handlers import RotatingFileHandler
 
 
 CLAUDE_MODEL = "claude-3-5-sonnet-20240620"
-# CLAUDE_MODEL = "claude-3-haiku-20240307"
+# CLAUDE_MODEL = "claude-3-haiku-20240307"  # Use for lower-cost testing. Note tool use will not really work with this model.
 COLLECTION_NAME = "Chunk"
 CLAUDE_LOGFILE = "logs/claude_logs.log"
 APP_LOGFILE = "logs/app.log"

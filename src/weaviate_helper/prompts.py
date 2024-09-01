@@ -1,3 +1,4 @@
+# File: src/weaviate_helper/prompts.py
 from enum import Enum
 
 

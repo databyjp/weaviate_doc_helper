@@ -1,3 +1,4 @@
+# File: src/weaviate_helper/tools.py
 from .db import _search_generic
 from typing import List
 

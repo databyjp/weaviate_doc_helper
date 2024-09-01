@@ -1,8 +1,8 @@
+# File: src/weaviate_helper/utils.py
 from typing import List
 from dataclasses import dataclass
 from typing import List, Iterable
 from pathlib import Path
-from anthropic.types.text_block import TextBlock
 from anthropic.types.tool_use_block import ToolUseBlock
 from anthropic.types import Message
 from .setup import CLAUDE_MODEL
