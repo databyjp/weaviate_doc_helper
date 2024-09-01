@@ -94,4 +94,6 @@ def ask_weaviate_agent(user_query: str):
         user_query,
         SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT_WITH_TOOLS.value,
     )
+    # Add "user_query" vs response to Weaviate to cache the results.
+    # If a similar query is asked again, we can use the cached results.
     process_response(r)
