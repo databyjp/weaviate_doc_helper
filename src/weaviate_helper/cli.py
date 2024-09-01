@@ -30,7 +30,9 @@ def ask_llm(user_query: str):
     "--user-query", prompt="Enter your query", help="The user query for code generation"
 )
 def ask_basic_ragbot(user_query: str):
-    r = ask_llm_base(user_query, SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT.value, use_search=True)
+    r = ask_llm_base(
+        user_query, SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT.value, use_search=True
+    )
     process_response(r)
 
 
@@ -65,6 +67,9 @@ def ask_ragbot_with_tools(user_query: str):
 )
 def safely_ask_ragbot_with_tools(user_query: str):
     r = ask_llm_base(
-        user_query, SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT_WITH_TOOLS.value, use_tools=True, safety_check=True
+        user_query,
+        SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT_WITH_TOOLS.value,
+        use_tools=True,
+        safety_check=True,
     )
     process_response(r)

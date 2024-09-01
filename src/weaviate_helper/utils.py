@@ -155,7 +155,11 @@ def _validate_query(user_query: str) -> Dict[str, Any]:
     Is the user query a potentially relevant Weaviate question, and is it safe to continue?
     """
 
-    chat = claudette.Chat(model=CLAUDE_MODEL, sp=SYSTEM_MSGS.SAFETY_AGENT.value, tools=[_format_query_validity])
+    chat = claudette.Chat(
+        model=CLAUDE_MODEL,
+        sp=SYSTEM_MSGS.SAFETY_AGENT.value,
+        tools=[_format_query_validity],
+    )
 
     r: Message = chat(prompt)
 
@@ -173,7 +177,15 @@ def _validate_query(user_query: str) -> Dict[str, Any]:
     }
 
 
-def _log_claude_to_file(user_query, use_tools, use_search, use_reformulation, search_query, search_results, response):
+def _log_claude_to_file(
+    user_query,
+    use_tools,
+    use_search,
+    use_reformulation,
+    search_query,
+    search_results,
+    response,
+):
     with open(CLAUDE_LOGFILE, "a") as f:
         f.write("\n\n")
         f.write("*" * 80)

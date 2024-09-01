@@ -25,7 +25,9 @@ def get_tools(use_tools: bool) -> Optional[List[str]]:
     )
 
 
-def generate_prompt(user_query: str, use_search: bool, use_reformulation: bool, search_results: str) -> str:
+def generate_prompt(
+    user_query: str, use_search: bool, use_reformulation: bool, search_results: str
+) -> str:
     """
     Generate the prompt for the LLM based on the given parameters.
 
@@ -74,7 +76,9 @@ def ask_llm_base(
             logger.debug(f"Reason: {validity_assessment['reason']}")
             raise ValueError(f"Query '{user_query}' is not validated to continue.")
 
-    processed_query = _formulate_one_search_query(user_query) if use_reformulation else user_query
+    processed_query = (
+        _formulate_one_search_query(user_query) if use_reformulation else user_query
+    )
     search_results = (
         _search_any(processed_query) if use_search or use_reformulation else ""
     )
@@ -91,7 +95,15 @@ def ask_llm_base(
         r: Message = chat(prompt)
 
     if log_to_file:
-        _log_claude_to_file(user_query, use_tools, use_search, use_reformulation, processed_query, search_results, r)
+        _log_claude_to_file(
+            user_query,
+            use_tools,
+            use_search,
+            use_reformulation,
+            processed_query,
+            search_results,
+            r,
+        )
 
     logger.debug(f"Response: {r}")
     return r

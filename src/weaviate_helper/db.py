@@ -15,7 +15,6 @@ logger = get_logger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-
 def connect_to_weaviate() -> WeaviateClient:
     cohere_apikey = os.environ["COHERE_APIKEY"]
     openai_apikey = os.environ["OPENAI_APIKEY"]

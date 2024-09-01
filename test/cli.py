@@ -1,10 +1,11 @@
 import pytest
 from click.testing import CliRunner
-from weaviate_helper.coder import (
+from weaviate_helper.cli import (
     ask_llm,
     ask_basic_ragbot,
     ask_ragbot_with_reformulation,
     ask_ragbot_with_tools,
+    safely_ask_ragbot_with_tools,
 )
 
 
@@ -33,4 +34,9 @@ def test_ask_ragbot_with_reformulation(runner):
 
 def test_ask_ragbot_with_tools(runner):
     result = runner.invoke(ask_ragbot_with_tools, input=query)
+    assert result.exit_code == 0
+
+
+def test_safely_ask_ragbot_with_tools(runner):
+    result = runner.invoke(safely_ask_ragbot_with_tools, input=query)
     assert result.exit_code == 0

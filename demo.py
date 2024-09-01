@@ -14,7 +14,12 @@ for user_query in [
     "What is multi-tenancy?",
     "How do I use filters in hybrid search with Python v4 client?",
 ]:
-    r = ask_llm_base(user_query, SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT.value, log_to_file=True)
     r = ask_llm_base(
-        user_query, SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT_WITH_TOOLS.value, use_tools=True, log_to_file=True
+        user_query, SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT.value, log_to_file=True
+    )
+    r = ask_llm_base(
+        user_query,
+        SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT_WITH_TOOLS.value,
+        use_tools=True,
+        log_to_file=True,
     )

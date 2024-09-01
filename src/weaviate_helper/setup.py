@@ -10,9 +10,14 @@ CLAUDE_LOGFILE = "logs/claude_logs.log"
 APP_LOGFILE = "logs/app.log"
 
 
-def configure_logging(log_file=APP_LOGFILE, max_file_size=1024*1024, backup_count=5, excluded_loggers=None):
+def configure_logging(
+    log_file=APP_LOGFILE,
+    max_file_size=1024 * 1024,
+    backup_count=5,
+    excluded_loggers=None,
+):
     if excluded_loggers is None:
-        excluded_loggers = ['httpx']  # Default loggers to exclude
+        excluded_loggers = ["httpx"]  # Default loggers to exclude
 
     # Configure root logger
     logging.basicConfig(level=logging.DEBUG)
@@ -23,7 +28,9 @@ def configure_logging(log_file=APP_LOGFILE, max_file_size=1024*1024, backup_coun
         root_logger.removeHandler(handler)
 
     # Create formatters
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
 
     # File Handler (with rotation)
     file_handler = RotatingFileHandler(
@@ -40,7 +47,9 @@ def configure_logging(log_file=APP_LOGFILE, max_file_size=1024*1024, backup_coun
     # Create a filter to exclude specified loggers
     class ExcludeLoggerFilter(logging.Filter):
         def filter(self, record):
-            return not any(record.name.startswith(logger) for logger in excluded_loggers)
+            return not any(
+                record.name.startswith(logger) for logger in excluded_loggers
+            )
 
     # Add the filter to both handlers
     exclude_filter = ExcludeLoggerFilter()
@@ -52,6 +61,7 @@ def configure_logging(log_file=APP_LOGFILE, max_file_size=1024*1024, backup_coun
     root_logger.addHandler(console_handler)
 
     logging.info("Logging configured.")
+
 
 # Configure logging when this module is imported
 configure_logging()
