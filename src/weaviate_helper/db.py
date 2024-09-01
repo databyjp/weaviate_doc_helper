@@ -4,12 +4,9 @@ import os
 from typing import List, Literal
 import claudette
 from anthropic.types import Message
-from .setup import CLAUDE_MODEL, setup_logging, COLLECTION_NAME
+from .setup import CLAUDE_MODEL, COLLECTION_NAME
 from .prompts import SYSTEM_MSGS
 from weaviate.classes.query import Filter
-
-
-logger = setup_logging()
 
 
 def connect_to_weaviate() -> WeaviateClient:
