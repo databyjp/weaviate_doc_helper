@@ -1,18 +1,15 @@
 # Filepath: /src/weaviate_helper/coder.py
 import claudette
+from typing import List, Optional
 from anthropic.types import Message
-from anthropic.types.text_block import TextBlock
-from anthropic.types.tool_use_block import ToolUseBlock
-from typing import Union
-from datetime import datetime
-from .setup import CLAUDE_MODEL, CLAUDE_LOGFILE, get_logger
+from .setup import CLAUDE_MODEL, get_logger
 from .tools import (
     _get_weaviate_connection_snippet,
     _search_any,
     _search_code,
     _search_text,
 )
-from .utils import _get_search_query, _validate_query
+from .utils import _formulate_one_search_query, _validate_query, _log_claude_to_file
 import logging
 
 
@@ -20,29 +17,44 @@ logger = get_logger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-def log_claude_to_file(user_query, use_tools, use_search, use_reformulation, search_query, search_results, response):
-    with open(CLAUDE_LOGFILE, "a") as f:
-        f.write("\n\n")
-        f.write("*" * 80)
-        f.write(f"Model: {CLAUDE_MODEL}\n")
-        f.write(f"Timestamp: {datetime.now()}\n")
-        f.write(f"User query: {user_query}\n")
-        f.write(f"Use tools: {use_tools}\n")
-        f.write(f"Use search: {use_search}\n")
-        f.write(f"Use reformulation: {use_reformulation}\n")
-        f.write(f"Search query: {search_query}\n")
-        f.write(f"Search results: {search_results}\n")
-        f.write(f"Raw Response:\n")
-        f.write(f"{response.to_json(indent=2)}\n")
-        f.write(f"Formatted Response:\n")
-        for block in response.content:
-            if isinstance(block, TextBlock):
-                f.write(f"{block.type}\n")
-                f.write(f"{block.text}\n")
-            elif isinstance(block, ToolUseBlock):
-                f.write(f"{block.type}\n")
-                f.write(f"{block.name}\n")
-                f.write(f"{block.input}\n")
+def get_tools(use_tools: bool) -> Optional[List[str]]:
+    return (
+        [_get_weaviate_connection_snippet, _search_text, _search_code]
+        if use_tools
+        else None
+    )
+
+
+def generate_prompt(user_query: str, use_search: bool, use_reformulation: bool, search_results: str) -> str:
+    """
+    Generate the prompt for the LLM based on the given parameters.
+
+    Args:
+    user_query (str): The original query from the user
+    use_search (bool): Whether to use search results
+    use_reformulation (bool): Whether the query was reformulated
+    search_results (str): The results from the search (if applicable)
+
+    Returns:
+    str: The generated prompt
+    """
+    prompt = f"""
+    The user has asked the following question:
+    <query>{user_query}</query>
+    """
+
+    if use_search or use_reformulation:
+        prompt += f"""
+        Please answer the question using the search results below,
+        and no other information.
+        <search_results>{search_results}</search_results>
+        """
+    else:
+        prompt += """
+        Please answer the question, using the array of tools included.
+        """
+
+    return prompt
 
 
 def ask_llm_base(
@@ -62,34 +74,15 @@ def ask_llm_base(
             logger.debug(f"Reason: {validity_assessment['reason']}")
             raise ValueError(f"Query '{user_query}' is not validated to continue.")
 
-    search_query = _get_search_query(user_query) if use_reformulation else user_query
+    processed_query = _formulate_one_search_query(user_query) if use_reformulation else user_query
     search_results = (
-        _search_any(search_query) if use_search or use_reformulation else ""
+        _search_any(processed_query) if use_search or use_reformulation else ""
     )
 
-    prompt = f"""
-    The user has asked the following question:
-    <query>{user_query}</query>
-    """
-
-    if use_search or use_reformulation:
-        prompt += f"""
-        Please answer the question using the search results below,
-        and no other information.
-        <search_results>{search_results}</search_results>
-        """
-    elif use_tools:
-        prompt += """
-        Please answer the question, using the array of tools included.
-        """
-
+    prompt = generate_prompt(user_query, use_search, use_reformulation, search_results)
     logger.debug(f"Prompt: {prompt}")
 
-    tools = (
-        [_get_weaviate_connection_snippet, _search_text, _search_code]
-        if use_tools
-        else None
-    )
+    tools = get_tools(use_tools)
     chat = claudette.Chat(model=CLAUDE_MODEL, sp=system_prompt, tools=tools)
 
     if use_tools:
@@ -98,7 +91,7 @@ def ask_llm_base(
         r: Message = chat(prompt)
 
     if log_to_file:
-        log_claude_to_file(user_query, use_tools, use_search, use_reformulation, search_query, search_results, r)
+        _log_claude_to_file(user_query, use_tools, use_search, use_reformulation, processed_query, search_results, r)
 
     logger.debug(f"Response: {r}")
     return r

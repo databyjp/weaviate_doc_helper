@@ -6,18 +6,19 @@ from pathlib import Path
 from anthropic.types import Message
 from anthropic.types.text_block import TextBlock
 from anthropic.types.tool_use_block import ToolUseBlock
-from .setup import CLAUDE_MODEL, get_logger
+from .setup import CLAUDE_MODEL, get_logger, CLAUDE_LOGFILE
 from .prompts import SYSTEM_MSGS
 from .tools import _format_query, _format_query_validity
 import claudette
 import logging
+from datetime import datetime
 
 
 logger = get_logger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-def _get_search_query(user_query: str) -> str:
+def _formulate_one_search_query(user_query: str) -> str:
     prompt = f"""
     The user has asked the following question:
     <query>{user_query}</query>
@@ -170,3 +171,28 @@ def _validate_query(user_query: str) -> Dict[str, Any]:
         "is_valid": False,
         "reason": "No tool use block found, returning False for safety.",
     }
+
+
+def _log_claude_to_file(user_query, use_tools, use_search, use_reformulation, search_query, search_results, response):
+    with open(CLAUDE_LOGFILE, "a") as f:
+        f.write("\n\n")
+        f.write("*" * 80)
+        f.write(f"Model: {CLAUDE_MODEL}\n")
+        f.write(f"Timestamp: {datetime.now()}\n")
+        f.write(f"User query: {user_query}\n")
+        f.write(f"Use tools: {use_tools}\n")
+        f.write(f"Use search: {use_search}\n")
+        f.write(f"Use reformulation: {use_reformulation}\n")
+        f.write(f"Search query: {search_query}\n")
+        f.write(f"Search results: {search_results}\n")
+        f.write(f"Raw Response:\n")
+        f.write(f"{response.to_json(indent=2)}\n")
+        f.write(f"Formatted Response:\n")
+        for block in response.content:
+            if isinstance(block, TextBlock):
+                f.write(f"{block.type}\n")
+                f.write(f"{block.text}\n")
+            elif isinstance(block, ToolUseBlock):
+                f.write(f"{block.type}\n")
+                f.write(f"{block.name}\n")
+                f.write(f"{block.input}\n")
