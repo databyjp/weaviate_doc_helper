@@ -3,6 +3,23 @@ from .db import _search_generic
 from typing import List
 
 
+def _format_query_validity(
+    is_valid: bool,
+    reason: str,
+) -> bool:
+    """
+    Format & display a boolean output.
+
+    Args:
+        is_valid: A boolean value.
+        reason: A string explaining why the query is valid or invalid.
+    """
+    return {
+        "is_valid": is_valid,
+        "reason": reason,
+    }
+
+
 def _format_query(
     query: str,
 ) -> str:

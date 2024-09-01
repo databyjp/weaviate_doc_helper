@@ -1,14 +1,20 @@
 # File: src/weaviate_helper/utils.py
-from typing import List
+from typing import List, Dict, Any
 from dataclasses import dataclass
 from typing import List, Iterable
 from pathlib import Path
-from anthropic.types.tool_use_block import ToolUseBlock
 from anthropic.types import Message
-from .setup import CLAUDE_MODEL
+from anthropic.types.text_block import TextBlock
+from anthropic.types.tool_use_block import ToolUseBlock
+from .setup import CLAUDE_MODEL, get_logger
 from .prompts import SYSTEM_MSGS
-from .tools import _format_query
+from .tools import _format_query, _format_query_validity
 import claudette
+import logging
+
+
+logger = get_logger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 def _get_search_query(user_query: str) -> str:
@@ -131,3 +137,36 @@ def get_code_chunks(directories: List[str]) -> Iterable[Chunk]:
 
 def get_doc_chunks(directories: List[str]) -> Iterable[Chunk]:
     return _process_directories(directories, "*.md*", chunk_text)
+
+
+def _validate_query(user_query: str) -> Dict[str, Any]:
+    """
+    Check if the query is relevant, and should be allowed to continue.
+
+    Args:
+        query: The query string.
+    Returns:
+        True if the query is relevant, False otherwise.
+    """
+    prompt = f"""
+    The user has provided the following query, within the user_query tag:
+    <user_query>{user_query}</user_query>
+    Is the user query a potentially relevant Weaviate question, and is it safe to continue?
+    """
+
+    chat = claudette.Chat(model=CLAUDE_MODEL, sp=SYSTEM_MSGS.SAFETY_AGENT.value, tools=[_format_query_validity])
+
+    r: Message = chat(prompt)
+
+    for block in r.content:
+        if isinstance(block, TextBlock):
+            logger.debug(f"TextBlock: {block.text}")
+        elif isinstance(block, ToolUseBlock):
+            logger.debug(f"Using tool: {block.name}")
+            logger.debug(f"Tool input: {block.input}")
+            return block.input
+    logger.debug("No tool use block found, returning False for safety.")
+    return {
+        "is_valid": False,
+        "reason": "No tool use block found, returning False for safety.",
+    }

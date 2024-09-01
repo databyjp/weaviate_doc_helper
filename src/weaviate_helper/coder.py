@@ -3,6 +3,7 @@ import claudette
 from anthropic.types import Message
 from anthropic.types.text_block import TextBlock
 from anthropic.types.tool_use_block import ToolUseBlock
+from typing import Union
 from datetime import datetime
 from .setup import CLAUDE_MODEL, CLAUDE_LOGFILE, get_logger
 from .tools import (
@@ -11,7 +12,7 @@ from .tools import (
     _search_code,
     _search_text,
 )
-from .utils import _get_search_query
+from .utils import _get_search_query, _validate_query
 import logging
 
 
@@ -52,7 +53,15 @@ def ask_llm_base(
     use_tools=False,
     max_steps=5,
     log_to_file=False,
-):
+    safety_check=False,
+) -> Message:
+    if safety_check:
+        validity_assessment = _validate_query(user_query)
+        if not validity_assessment["is_valid"]:
+            logger.debug(f"Query '{user_query}' is not validated to continue.")
+            logger.debug(f"Reason: {validity_assessment['reason']}")
+            raise ValueError(f"Query '{user_query}' is not validated to continue.")
+
     search_query = _get_search_query(user_query) if use_reformulation else user_query
     search_results = (
         _search_any(search_query) if use_search or use_reformulation else ""

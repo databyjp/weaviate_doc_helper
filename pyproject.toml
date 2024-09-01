@@ -13,6 +13,7 @@ ask_llm = "weaviate_helper.cli:ask_llm"
 ask_basic_ragbot = "weaviate_helper.cli:ask_basic_ragbot"
 ask_ragbot_with_reformulation = "weaviate_helper.cli:ask_ragbot_with_reformulation"
 ask_ragbot_with_tools = "weaviate_helper.cli:ask_ragbot_with_tools"
+safely_ask_ragbot_with_tools = "weaviate_helper.cli:safely_ask_ragbot_with_tools"
 
 [tool.setuptools.packages.find]
 where = ["src"]
