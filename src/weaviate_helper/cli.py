@@ -93,8 +93,7 @@ def ask_weaviate_agent(user_query: str):
     r = ask_llm_final(
         user_query,
         SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT_WITH_TOOLS.value,
-        use_tools=True,
-        safety_check=True,
         log_to_file=True,
+        safety_check=True,
     )
     process_response(r)

@@ -116,12 +116,9 @@ def ask_llm_base(
 def ask_llm_final(
     user_query: str,
     system_prompt,
-    use_search=False,
-    use_reformulation=False,
-    use_tools=False,
     max_steps=5,
-    log_to_file=False,
-    safety_check=False,
+    log_to_file=True,
+    safety_check=True,
 ) -> Message:
     if safety_check:
         validity_assessment = _validate_query(user_query)
@@ -144,23 +141,17 @@ def ask_llm_final(
     """
     logger.debug(f"Prompt: {prompt}")
 
-    tools = get_tools(use_tools)
+    tools = get_tools(use_tools=True)
     chat = claudette.Chat(model=CLAUDE_MODEL, sp=system_prompt, tools=tools)
 
-    if use_tools:
-        r: Message = chat.toolloop(prompt, max_steps=max_steps)
-    else:
-        r: Message = chat(prompt)
+    r: Message = chat.toolloop(prompt, max_steps=max_steps)
 
     if log_to_file:
         _log_claude_to_file(
-            user_query,
-            use_tools,
-            use_search,
-            use_reformulation,
-            ";".join(decomposed_queries),
-            None,
-            r,
+            user_query=user_query,
+            use_tools=True,
+            search_query=";".join(decomposed_queries),
+            response=r,
         )
 
     logger.debug(f"Response: {r}")
