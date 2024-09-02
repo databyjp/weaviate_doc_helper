@@ -9,13 +9,13 @@ services:
     - '8080'
     - --scheme
     - http
-    image: semitechnologies/weaviate:1.26.1
+    image: cr.weaviate.io/semitechnologies/weaviate:1.26.1
     ports:
     - 8280:8080
     - 50251:50051
     restart: on-failure:0
     volumes:
-    - weaviate_agent:/var/lib/weaviate
+    - weaviate_doc_helper:/var/lib/weaviate
     environment:
       QUERY_DEFAULTS_LIMIT: 25
       AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
@@ -25,5 +25,5 @@ services:
       BACKUP_FILESYSTEM_PATH: '/var/lib/weaviate/backups'
       CLUSTER_HOSTNAME: 'node1'
 volumes:
-  weaviate_agent:
+  weaviate_doc_helper:
 ...
