@@ -5,7 +5,7 @@ from weaviate_helper import db
 client = db.connect_to_weaviate()
 
 default_vindex_config = Configure.VectorIndex.hnsw(
-    quantizer=Configure.VectorIndex.Quantizer.sq(training_limit=10000)
+    quantizer=Configure.VectorIndex.Quantizer.sq(training_limit=25000)
 )
 
 client.collections.delete(COLLECTION_NAME_CHUNKS)
