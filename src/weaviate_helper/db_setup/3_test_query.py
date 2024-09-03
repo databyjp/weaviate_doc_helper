@@ -10,9 +10,9 @@ print(chunks.aggregate.over_all(total_count=True))
 
 for doctype in ["doc", "code"]:
     response = chunks.query.hybrid(
-        query="target_vector",
+        query="hybrid search",
         alpha=0.75,
-        target_vector="chunk_summary",
+        target_vector="chunk",
         filters=Filter.by_property("doctype").equal(doctype),
         limit=5,
     )

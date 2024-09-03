@@ -102,13 +102,30 @@ def _search_generic(query: str, doctype: Literal["code", "text", "any"]) -> List
         response = collection.query.hybrid(
             query=query,
             filters=filter,
-            limit=3,
+            limit=2,
             alpha=0.5,
-            target_vector="chunk_summary",
+            target_vector="chunk",
+            # target_vector=["chunk_summary", "chunk"],
+            return_properties=["filepath", "chunk", "chunk_no", "doctype", "line_start", "line_end"],
         )
     logger.debug(f"Search results: {response}")
     response_text = [_response_obj_to_str(o) for o in response.objects]
     return response_text
+
+
+def _search_multiple(queries: List[str]) -> List[str]:
+    """Search for multiple queries in Weaviate, and combine them"""
+    logger.debug(f"Searching for queries: {queries} in Weaviate, in both doctypes")
+    all_response_text = []
+    for query in queries:
+        for doctype in ["code", "text"]:
+            response_text = _search_generic(query=query, doctype=doctype)
+            all_response_text.extend(response_text)
+
+    # Remove duplicates
+    all_response_text = list(set(all_response_text))
+
+    return all_response_text
 
 
 def _add_answer_to_cache(user_query: str, answer: str) -> UUID:

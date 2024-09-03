@@ -34,13 +34,14 @@ with chunks.batch.fixed_size(batch_size=100) as batch:
             obj_uuid = generate_uuid5(c.chunk + str(c.filepath) + str(c.chunk_no))
 
             if not chunks.data.exists(obj_uuid):
-                chunk_summary = summarize_snippet(c.chunk)
+                # chunk_summary = summarize_snippet(c.chunk)
 
                 batch.add_object(
                     properties={
-                        "chunk": c.chunk,
+                        "chunk": c.chunk[:1024],  # In case the chunk is too long
+                        # "chunk_summary": chunk_summary,
+                        "chunk_raw": c.chunk,
                         "chunk_no": c.chunk_no,
-                        "chunk_summary": chunk_summary,
                         "filepath": str(c.filepath),
                         "doctype": c.doctype,
                         "line_start": c.line_start,

@@ -2,6 +2,7 @@
 import claudette
 from typing import List, Optional
 from anthropic.types import Message
+from anthropic.types.text_block import TextBlock
 from .setup import CLAUDE_MODEL, get_logger
 from .tools import (
     _get_weaviate_connection_snippet,
@@ -11,6 +12,8 @@ from .tools import (
     _decompose_search_query,
 )
 from .utils import _formulate_one_search_query, _validate_query, _log_claude_to_file
+from .db import _add_answer_to_cache
+from .prompts import SYSTEM_MSGS
 import logging
 
 
@@ -114,8 +117,8 @@ def ask_llm_base(
 
 def _ask_weaviate_agent(
     user_query: str,
-    system_prompt,
     max_steps=5,
+    add_to_cache=True,
 ) -> Message:
     validity_assessment = _validate_query(user_query)
     if not validity_assessment["is_valid"]:
@@ -137,6 +140,7 @@ def _ask_weaviate_agent(
     """
     logger.debug(f"Prompt: {prompt}")
 
+    system_prompt = SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT_WITH_TOOLS.value
     chat = claudette.Chat(model=CLAUDE_MODEL, sp=system_prompt, tools=get_tools())
 
     r: Message = chat.toolloop(prompt, max_steps=max_steps)
@@ -152,4 +156,11 @@ def _ask_weaviate_agent(
     )
 
     logger.debug(f"Response: {r}")
+
+    if add_to_cache:
+        # Add "user_query" & response to Weaviate to cache the results.
+        # If a similar query is asked again, we can use the cached results.
+        if isinstance(r.content[-1], TextBlock):
+            _add_answer_to_cache(user_query, r.content[-1].text)
+
     return r

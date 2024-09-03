@@ -20,8 +20,7 @@ class SYSTEM_MSGS(Enum):
 
     Please follow these steps to answer the query:
 
-    - For each code example, start by finding out how to connect to Weaviate as it a common step, and may have changed.
-    Note that connecting to Weaviate like this: (client = weaviate.Client("http://localhost:8080")) is out-of-date and incorrect.
+    - For each code example, start by finding out how to connect to Weaviate.
 
     - Use one or more of the provided tools to obtain the required information.
     You may need to make multiple calls to the tools to gather all the necessary details.
@@ -47,9 +46,15 @@ class SYSTEM_MSGS(Enum):
 
        </answer>
 
-    - Once again, you will only use information provided in the information retrieved through the tools.
-    If you cannot find specific information state this clearly in your answer
-    and explain what information you would need to provide a complete response.
+    Very importantly, please note that the Weaviate client library syntax may have changed over time.
+    So, please make sure to use the code snippets that you found from the documentation.
+
+    For example, DO NOT USE the following syntax. Instead, use examples retrieved using the provided tools.
+    <outdated_syntax>
+    client = weaviate.Client("http://localhost:8080")
+
+    client.query.get(<Parameters>)
+    </outdated_syntax>
     """
     HYBRID_SEARCH_QUERY_WRITER = """
     You are an AI assistant with expertise in Weaviate and vector search.
@@ -105,6 +110,9 @@ class SYSTEM_MSGS(Enum):
     Note that the specific values used as parameters are likely to be not so important,
     as the values are likely to be placeholders.
 
+    So, omit the specific values in the summary and explanation such as
+    the collection name, search query, and so on. Instead, focus on the concepts that are shown in the code.
+
     You are to write the explanation of the example in <explanation> tags.
     """
 
@@ -116,6 +124,9 @@ class EXAMPLE_USER_QUERIES(Enum):
     CONNECT_AND_RUN_HYBRID_SEARCH = """
     How do I connect to a local Weaviate instance, and run a hybrid search, with the v4 Python client API?
     """
-    COMPLEX_WEAVIATE_QUERY = """
+    MULTI_STEP_WEAVIATE_QUERY = """
     How do I connect to a local Weaviate instance and set up a multi-tenant collection with the ollama vectorizer and an openai generative module? Then how can I run a hybrid search on the collection and see the search result scores? Also, how do the hybrid search results get combined together? The examples should use the v4 Python client API.
+    """
+    COMPLEX_WEAVIATE_QUERY = """
+    How do I perform a hybrid search with multiple filters, combining timestamps and property filters?
     """

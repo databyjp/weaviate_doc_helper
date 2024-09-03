@@ -1,4 +1,4 @@
-from weaviate_helper.utils import explain_code_snippet
+from weaviate_helper.utils import summarize_snippet
 
 collection_creation = """
 from weaviate.classes.config import Configure, Property, DataType
@@ -46,5 +46,5 @@ response = jeopardy.query.hybrid(
 )
 """
 
-print(explain_code_snippet(collection_creation))
-print(explain_code_snippet(hybrid_search_snippet))
+print(summarize_snippet(collection_creation))
+print(summarize_snippet(hybrid_search_snippet))

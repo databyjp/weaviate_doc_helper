@@ -91,14 +91,5 @@ def safely_ask_ragbot_with_tools(user_query: str):
     "--user-query", prompt="Enter your query", help="The user query for code generation"
 )
 def ask_weaviate_agent(user_query: str):
-    r = _ask_weaviate_agent(
-        user_query,
-        SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT_WITH_TOOLS.value,
-    )
-
-    # Add "user_query" & response to Weaviate to cache the results.
-    # If a similar query is asked again, we can use the cached results.
-    if isinstance(r.content[-1], TextBlock):
-        _add_answer_to_cache(user_query, r.content[-1].text)
-
+    r = _ask_weaviate_agent(user_query)
     process_response(r)
