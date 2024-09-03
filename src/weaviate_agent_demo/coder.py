@@ -12,7 +12,7 @@ from .tools import (
     _decompose_search_query,
 )
 from .utils import _formulate_one_search_query, _validate_query, _log_claude_to_file
-from .db import _add_answer_to_cache
+from .db import _add_answer_to_cache, _search_multiple
 from .prompts import SYSTEM_MSGS
 import logging
 
@@ -130,19 +130,21 @@ def _ask_weaviate_agent(
 
     decomposed_queries = _decompose_search_query(user_query)
 
+    search_results = _search_multiple(decomposed_queries)
+    search_results.append(_get_weaviate_connection_snippet())
+
     prompt = f"""
     The user has asked the following question:
     <user_query>{user_query}</user_query>
 
-    Please answer the question, using the array of tools included.
+    Please answer the question, using the provided text.
+    <provided_text>{search_results}</provided_text>
 
-    If you would like to perform searches,
-    we suggest using the following search queries:
-    <search_queries>{decomposed_queries}</search_queries>
+    If you require further information, use the provided tools.
     """
     logger.debug(f"Prompt: {prompt}")
 
-    system_prompt = SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT_WITH_TOOLS.value
+    system_prompt = SYSTEM_MSGS.WEAVIATE_EXPERT_FINAL.value
     chat = claudette.Chat(model=CLAUDE_MODEL, sp=system_prompt, tools=get_tools())
 
     r: Message = chat.toolloop(prompt, max_steps=max_steps)

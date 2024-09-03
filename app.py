@@ -118,7 +118,7 @@ if user_query:
 
         _log_claude_to_file(
             user_query,
-            use_tools=False,
+            use_tools=True,
             use_search=False,
             use_reformulation=False,
             search_query=";".join(decomposed_queries),
