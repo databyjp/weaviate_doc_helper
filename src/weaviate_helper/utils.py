@@ -188,7 +188,7 @@ def _log_claude_to_file(
 ):
     with open(CLAUDE_LOGFILE, "a") as f:
         f.write("\n\n")
-        f.write("*" * 80)
+        f.write("*" * 80 + "\n")
         f.write(f"Model: {CLAUDE_MODEL}\n")
         f.write(f"Timestamp: {datetime.now()}\n")
         f.write(f"User query: {user_query}\n")

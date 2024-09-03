@@ -143,7 +143,7 @@ def _ask_weaviate_agent(
 
     _log_claude_to_file(
         user_query,
-        use_toolss=True,
+        use_tools=True,
         use_search=False,
         use_reformulation=False,
         search_query=";".join(decomposed_queries),
