@@ -50,7 +50,7 @@ def message_to_markdown(message: Message) -> str:
 
 st.header("Weaviate Helper")
 
-user_query = st.text_input(label="What do you want to know about Weaviate?")
+user_query = st.text_input(label="Can I help you with Weaviate or the Python client V4?")
 
 
 if user_query:
