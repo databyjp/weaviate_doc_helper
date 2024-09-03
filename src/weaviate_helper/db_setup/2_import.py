@@ -1,4 +1,4 @@
-from weaviate_helper.utils import get_code_chunks, get_doc_chunks
+from weaviate_helper.utils import get_code_chunks, get_doc_chunks, explain_code_snippet
 from weaviate_helper.db import connect_to_weaviate
 from weaviate_helper.setup import COLLECTION_NAME
 from weaviate.util import generate_uuid5
@@ -28,34 +28,31 @@ client = connect_to_weaviate()
 chunks = client.collections.get(COLLECTION_NAME)
 
 with chunks.batch.fixed_size(batch_size=100) as batch:
-    for c in code_chunks:
-        batch.add_object(
-            properties={
-                "chunk": c.chunk,
-                "chunk_no": c.chunk_no,
-                "filepath": str(c.filepath),
-                "doctype": c.doctype,
-                "line_start": c.line_start,
-                "line_end": c.line_end,
-            },
-            uuid=generate_uuid5(c.chunk + str(c.filepath) + str(c.chunk_no)),
-        )
-        if batch.number_errors > 50:
-            print("Too many errors, stopping")
-            break
+    for chunks_gen in [code_chunks, doc_chunks]:
+        for c in chunks_gen:
+            obj_uuid = generate_uuid5(c.chunk + str(c.filepath) + str(c.chunk_no))
 
-    for c in doc_chunks:
-        batch.add_object(
-            properties={
-                "chunk": c.chunk,
-                "chunk_no": c.chunk_no,
-                "filepath": str(c.filepath),
-                "doctype": c.doctype,
-                "line_start": c.line_start,
-                "line_end": c.line_end,
-            },
-            uuid=generate_uuid5(c.chunk + str(c.filepath) + str(c.chunk_no)),
-        )
+            if not chunks.data.exists(obj_uuid):
+                if c.doctype == "code":
+                    chunk_summary = explain_code_snippet(c.chunk)
+                else:
+                    chunk_summary = c.chunk
+                batch.add_object(
+                    properties={
+                        "chunk": c.chunk,
+                        "chunk_no": c.chunk_no,
+                        "chunk_summary": chunk_summary,
+                        "filepath": str(c.filepath),
+                        "doctype": c.doctype,
+                        "line_start": c.line_start,
+                        "line_end": c.line_end,
+                    },
+                    uuid=obj_uuid,
+                )
+            else:
+                print(f"Skipping {obj_uuid} because it already exists")
+                continue
+
         if batch.number_errors > 50:
             print("Too many errors, stopping")
             break

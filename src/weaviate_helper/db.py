@@ -102,7 +102,7 @@ def _search_generic(query: str, doctype: Literal["code", "text", "any"]) -> List
             filters=filter,
             limit=3,
             alpha=0.5,
-            target_vector="chunk",
+            target_vector="chunk_summary",
         )
     logger.debug(f"Search results: {response}")
     response_text = [_response_obj_to_str(o) for o in response.objects]

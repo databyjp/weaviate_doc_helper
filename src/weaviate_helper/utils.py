@@ -6,7 +6,7 @@ from pathlib import Path
 from anthropic.types import Message
 from anthropic.types.text_block import TextBlock
 from anthropic.types.tool_use_block import ToolUseBlock
-from .setup import CLAUDE_MODEL, get_logger, CLAUDE_LOGFILE
+from .setup import CLAUDE_MODEL, get_logger, CLAUDE_LOGFILE, CLAUDE_HAIKU
 from .prompts import SYSTEM_MSGS
 from .tools import _format_query, _format_query_validity, _format_decomposed_query
 import claudette
@@ -208,3 +208,34 @@ def _log_claude_to_file(
                 f.write(f"{block.type}\n")
                 f.write(f"{block.name}\n")
                 f.write(f"{block.input}\n")
+
+
+def explain_code_snippet(chunk: str) -> str:
+    prompt = f"""
+    The user has provided the following code snippet, within the "code_snippet" tag:
+
+    Review the code snippet, and provide an explanation of the code snippet within a <code_explanation> tag.
+
+    The explanation should be a paragraph of 2-5 sentences, in plain English.
+    The explanation is to be used to help the user understand the code snippet,
+    and to help the user for search for the code snippet.
+
+    The explanation should include key terms and concepts that are relevant to the code snippet.
+
+    <code_snippet>{chunk}</code_snippet>
+    """
+
+    chat = claudette.Chat(
+        model=CLAUDE_HAIKU,
+        sp=SYSTEM_MSGS.CODE_EXPLAINER.value,
+    )
+
+    r: Message = chat(prompt)
+
+    if len(r.content) > 1:
+        logger.debug(f"Odd, multiple content blocks returned. Response message: {r}")
+
+    response_text = r.content[-1].text
+    explanation = response_text.split("<code_explanation>")[1].split("</code_explanation>")[0]
+
+    return explanation

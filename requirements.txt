@@ -36,5 +36,3 @@ typing_extensions==4.12.2
 urllib3==2.2.2
 validators==0.33.0
 weaviate-client==4.7.1
-# Editable Git install with no remote (weaviate_helper==0.0.1)
--e /Users/jphwang/code/weaviate_helper

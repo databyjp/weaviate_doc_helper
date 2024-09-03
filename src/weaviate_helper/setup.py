@@ -1,13 +1,15 @@
 # Filepath: /src/weaviate_helper/setup.py
+from pathlib import Path
 import logging
 from logging.handlers import RotatingFileHandler
 
 
-CLAUDE_MODEL = "claude-3-5-sonnet-20240620"
-# CLAUDE_MODEL = "claude-3-haiku-20240307"  # Use for lower-cost testing. Note tool use will not really work with this model.
-COLLECTION_NAME = "Chunk"
+CLAUDE_SONNET = "claude-3-5-sonnet-20240620"
+CLAUDE_HAIKU = "claude-3-haiku-20240307"
+CLAUDE_MODEL = CLAUDE_SONNET
 CLAUDE_LOGFILE = "logs/claude_logs.log"
 APP_LOGFILE = "logs/app.log"
+COLLECTION_NAME = "Chunk"
 
 
 def configure_logging(
@@ -16,6 +18,10 @@ def configure_logging(
     backup_count=5,
     excluded_loggers=None,
 ):
+    logfile_path = Path(log_file)
+    logfile_path.parent.mkdir(parents=True, exist_ok=True)
+    logfile_path.touch(exist_ok=True)
+
     if excluded_loggers is None:
         excluded_loggers = ["httpx"]  # Default loggers to exclude
 
