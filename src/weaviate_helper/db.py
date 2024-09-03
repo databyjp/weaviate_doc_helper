@@ -112,16 +112,16 @@ def _search_generic(query: str, doctype: Literal["code", "text", "any"]) -> List
 
 
 def _add_answer_to_cache(user_query: str, answer: str) -> UUID:
-    client = connect_to_weaviate()
+    with connect_to_weaviate() as client:
 
-    cached_answers = client.collections.get(COLLECTION_NAME_CACHED_ANSWERS)
+        cached_answers = client.collections.get(COLLECTION_NAME_CACHED_ANSWERS)
 
-    logger.debug(f"Inserting the answer for query: {user_query} into cache...")
-    uuid = cached_answers.data.insert(
-        properties={
-            "user_query": user_query,
-            "answer": answer,
-            "timestamp": datetime.now().replace(tzinfo=timezone.utc).isoformat(),
-        }
-    )
-    return uuid
+        logger.debug(f"Inserting the answer for query: {user_query} into cache...")
+        uuid = cached_answers.data.insert(
+            properties={
+                "user_query": user_query,
+                "answer": answer,
+                "timestamp": datetime.now().replace(tzinfo=timezone.utc).isoformat(),
+            }
+        )
+        return uuid
