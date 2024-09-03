@@ -95,10 +95,12 @@ if user_query:
 
         Please answer the question, using the provided text.
         <provided_text>{search_results}</provided_text>
+
+        If you require further information, use the provided tools.
         """
         logger.debug(f"Prompt: {prompt}")
 
-        system_prompt = SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT.value
+        system_prompt = SYSTEM_MSGS.WEAVIATE_EXPERT_FINAL.value
 
         st.write(f"Prompting our LLM with the following inputs:")
         with st.expander("Prompt"):
@@ -107,8 +109,8 @@ if user_query:
             st.write(system_prompt)
 
         with st.spinner("Asking the AI assistant. Please wait..."):
-            chat = claudette.Chat(model=CLAUDE_MODEL, sp=system_prompt)
-            r: Message = chat(prompt)
+            chat = claudette.Chat(model=CLAUDE_MODEL, sp=system_prompt, tools=get_tools())
+            r: Message = chat.toolloop(prompt, max_steps=5)
 
         with st.chat_message("assistant"):
             st.write(f"Response:")

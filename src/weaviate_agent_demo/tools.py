@@ -105,6 +105,7 @@ def _search_text(query: str) -> List[str]:
     Returns:
         A list of strings from the documentation text.
     """
+    logger.debug(f"Running `_search_text` for {query}")
     return _search_generic(query, "text")
 
 
@@ -118,6 +119,7 @@ def _search_code(query: str) -> List[str]:
     Returns:
         A list of strings from the documentation code examples.
     """
+    logger.debug(f"Running `_search_code` for {query}")
     return _search_generic(query, "code")
 
 
@@ -130,6 +132,7 @@ def _search_any(query: str) -> List[str]:
     Returns:
         A list of strings from the documentation.
     """
+    logger.debug(f"Running `_search_any` for {query}")
     return _search_generic(query, "any")
 
 

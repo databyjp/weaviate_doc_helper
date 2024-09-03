@@ -25,7 +25,7 @@ def configure_logging(
     logfile_path.touch(exist_ok=True)
 
     if excluded_loggers is None:
-        excluded_loggers = ["httpx"]  # Default loggers to exclude
+        excluded_loggers = ["httpx", "httpcore", "asyncio", "grpc"]  # Default loggers to exclude
 
     # Configure root logger
     logging.basicConfig(level=logging.DEBUG)

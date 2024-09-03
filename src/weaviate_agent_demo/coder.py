@@ -23,7 +23,7 @@ logger.setLevel(logging.DEBUG)
 
 def get_tools(use_tools: bool = True) -> Optional[List[str]]:
     return (
-        [_get_weaviate_connection_snippet, _search_text, _search_code]
+        [_search_text, _search_code]
         if use_tools
         else None
     )
