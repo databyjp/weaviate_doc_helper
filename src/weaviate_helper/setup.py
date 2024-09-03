@@ -9,7 +9,9 @@ CLAUDE_HAIKU = "claude-3-haiku-20240307"
 CLAUDE_MODEL = CLAUDE_SONNET
 CLAUDE_LOGFILE = "logs/claude_logs.log"
 APP_LOGFILE = "logs/app.log"
-COLLECTION_NAME = "Chunk"
+
+COLLECTION_NAME_CHUNKS = "Chunk"
+COLLECTION_NAME_CACHED_ANSWERS = "Answers"
 
 
 def configure_logging(

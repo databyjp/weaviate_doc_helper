@@ -1,6 +1,7 @@
 # File: src/weaviate_helper/cli.py
 import click
 from .coder import ask_llm_base, _ask_weaviate_agent
+from .db import _add_answer_to_cache
 from .prompts import SYSTEM_MSGS
 from anthropic.types import Message
 from anthropic.types.text_block import TextBlock
@@ -94,6 +95,10 @@ def ask_weaviate_agent(user_query: str):
         user_query,
         SYSTEM_MSGS.WEAVIATE_EXPERT_SUPPORT_WITH_TOOLS.value,
     )
-    # Add "user_query" vs response to Weaviate to cache the results.
+
+    # Add "user_query" & response to Weaviate to cache the results.
     # If a similar query is asked again, we can use the cached results.
+    if isinstance(r.content[-1], TextBlock):
+        _add_answer_to_cache(user_query, r.content[-1].text)
+
     process_response(r)

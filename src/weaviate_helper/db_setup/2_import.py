@@ -1,6 +1,6 @@
 from weaviate_helper.utils import get_code_chunks, get_doc_chunks, summarize_snippet
 from weaviate_helper.db import connect_to_weaviate
-from weaviate_helper.setup import COLLECTION_NAME
+from weaviate_helper.setup import COLLECTION_NAME_CHUNKS
 from weaviate.util import generate_uuid5
 from tqdm import tqdm
 
@@ -26,7 +26,7 @@ doc_chunks = get_doc_chunks(doc_directories)
 
 client = connect_to_weaviate()
 
-chunks = client.collections.get(COLLECTION_NAME)
+chunks = client.collections.get(COLLECTION_NAME_CHUNKS)
 
 with chunks.batch.fixed_size(batch_size=100) as batch:
     for chunks_gen in [code_chunks, doc_chunks]:

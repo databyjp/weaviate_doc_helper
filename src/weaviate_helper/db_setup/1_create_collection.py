@@ -1,5 +1,5 @@
 from weaviate.classes.config import Property, DataType, Configure
-from weaviate_helper.setup import COLLECTION_NAME
+from weaviate_helper.setup import COLLECTION_NAME_CHUNKS
 from weaviate_helper import db
 
 client = db.connect_to_weaviate()
@@ -8,10 +8,10 @@ default_vindex_config = Configure.VectorIndex.hnsw(
     quantizer=Configure.VectorIndex.Quantizer.sq(training_limit=10000)
 )
 
-client.collections.delete(COLLECTION_NAME)
+client.collections.delete(COLLECTION_NAME_CHUNKS)
 
 codechunks = client.collections.create(
-    name=COLLECTION_NAME,
+    name=COLLECTION_NAME_CHUNKS,
     properties=[
         Property(name="chunk", data_type=DataType.TEXT),
         Property(name="chunk_no", data_type=DataType.INT),

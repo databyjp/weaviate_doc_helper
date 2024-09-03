@@ -1,10 +1,10 @@
 from weaviate_helper.db import connect_to_weaviate
-from weaviate_helper.setup import COLLECTION_NAME
+from weaviate_helper.setup import COLLECTION_NAME_CHUNKS
 from weaviate.classes.query import Filter
 
 client = connect_to_weaviate()
 
-chunks = client.collections.get(COLLECTION_NAME)
+chunks = client.collections.get(COLLECTION_NAME_CHUNKS)
 
 print(chunks.aggregate.over_all(total_count=True))
 

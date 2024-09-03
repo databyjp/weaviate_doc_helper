@@ -1,14 +1,16 @@
 # File: src/weaviate_helper/db.py
 import weaviate
 from weaviate import WeaviateClient
+from weaviate.types import UUID
 import os
 from typing import List, Literal
 import claudette
 from anthropic.types import Message
-from .setup import CLAUDE_MODEL, COLLECTION_NAME, get_logger
+from .setup import CLAUDE_MODEL, COLLECTION_NAME_CHUNKS, COLLECTION_NAME_CACHED_ANSWERS, get_logger
 from .prompts import SYSTEM_MSGS
 from weaviate.classes.query import Filter
 import logging
+from datetime import datetime, timezone
 
 
 logger = get_logger(__name__)
@@ -90,7 +92,7 @@ def _search_generic(query: str, doctype: Literal["code", "text", "any"]) -> List
     """
     logger.debug(f"Searching for query: {query} in Weaviate, in doctype: {doctype}")
     with connect_to_weaviate() as weaviate_client:
-        collection = weaviate_client.collections.get(COLLECTION_NAME)
+        collection = weaviate_client.collections.get(COLLECTION_NAME_CHUNKS)
 
         if doctype == "any":
             filter = None
@@ -107,3 +109,19 @@ def _search_generic(query: str, doctype: Literal["code", "text", "any"]) -> List
     logger.debug(f"Search results: {response}")
     response_text = [_response_obj_to_str(o) for o in response.objects]
     return response_text
+
+
+def _add_answer_to_cache(user_query: str, answer: str) -> UUID:
+    client = connect_to_weaviate()
+
+    cached_answers = client.collections.get(COLLECTION_NAME_CACHED_ANSWERS)
+
+    logger.debug(f"Inserting the answer for query: {user_query} into cache...")
+    uuid = cached_answers.data.insert(
+        properties={
+            "user_query": user_query,
+            "answer": answer,
+            "timestamp": datetime.now().replace(tzinfo=timezone.utc).isoformat(),
+        }
+    )
+    return uuid
