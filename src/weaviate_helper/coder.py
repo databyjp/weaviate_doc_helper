@@ -142,9 +142,12 @@ def _ask_weaviate_agent(
     r: Message = chat.toolloop(prompt, max_steps=max_steps)
 
     _log_claude_to_file(
-        user_query=user_query,
-        use_tools=True,
+        user_query,
+        use_toolss=True,
+        use_search=False,
+        use_reformulation=False,
         search_query=";".join(decomposed_queries),
+        search_results=None,
         response=r,
     )
 

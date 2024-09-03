@@ -210,24 +210,24 @@ def _log_claude_to_file(
                 f.write(f"{block.input}\n")
 
 
-def explain_code_snippet(chunk: str) -> str:
+def summarize_snippet(chunk: str) -> str:
     prompt = f"""
-    The user has provided the following code snippet, within the "code_snippet" tag:
+    The user has provided the following snippet, within the "original_snippet" tag:
 
-    Review the code snippet, and provide an explanation of the code snippet within a <code_explanation> tag.
+    Review the original snippet, and provide an explanation of the snippet within an <explanation> tag.
 
     The explanation should be a paragraph of 2-5 sentences, in plain English.
-    The explanation is to be used to help the user understand the code snippet,
-    and to help the user for search for the code snippet.
+    The explanation is to be used to help the user understand the snippet,
+    and to help the user for search for the snippet.
 
-    The explanation should include key terms and concepts that are relevant to the code snippet.
+    The explanation should include key terms and concepts that are relevant to the snippet.
 
-    <code_snippet>{chunk}</code_snippet>
+    <original_snippet>{chunk}</original_snippet>
     """
 
     chat = claudette.Chat(
         model=CLAUDE_HAIKU,
-        sp=SYSTEM_MSGS.CODE_EXPLAINER.value,
+        sp=SYSTEM_MSGS.SUMMARIZER.value,
     )
 
     r: Message = chat(prompt)
@@ -236,6 +236,6 @@ def explain_code_snippet(chunk: str) -> str:
         logger.debug(f"Odd, multiple content blocks returned. Response message: {r}")
 
     response_text = r.content[-1].text
-    explanation = response_text.split("<code_explanation>")[1].split("</code_explanation>")[0]
+    explanation = response_text.split("<explanation>")[1].split("</explanation>")[0]
 
     return explanation

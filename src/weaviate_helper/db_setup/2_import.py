@@ -1,7 +1,8 @@
-from weaviate_helper.utils import get_code_chunks, get_doc_chunks, explain_code_snippet
+from weaviate_helper.utils import get_code_chunks, get_doc_chunks, summarize_snippet
 from weaviate_helper.db import connect_to_weaviate
 from weaviate_helper.setup import COLLECTION_NAME
 from weaviate.util import generate_uuid5
+from tqdm import tqdm
 
 
 code_directories = [
@@ -29,14 +30,12 @@ chunks = client.collections.get(COLLECTION_NAME)
 
 with chunks.batch.fixed_size(batch_size=100) as batch:
     for chunks_gen in [code_chunks, doc_chunks]:
-        for c in chunks_gen:
+        for c in tqdm(chunks_gen):
             obj_uuid = generate_uuid5(c.chunk + str(c.filepath) + str(c.chunk_no))
 
             if not chunks.data.exists(obj_uuid):
-                if c.doctype == "code":
-                    chunk_summary = explain_code_snippet(c.chunk)
-                else:
-                    chunk_summary = c.chunk
+                chunk_summary = summarize_snippet(c.chunk)
+
                 batch.add_object(
                     properties={
                         "chunk": c.chunk,

@@ -22,17 +22,15 @@ codechunks = client.collections.create(
         Property(name="line_end", data_type=DataType.INT),
     ],
     vectorizer_config=[
-        Configure.NamedVectors.text2vec_openai(
-            name="chunk",
-            source_properties=["chunk"],
-            vector_index_config=default_vindex_config,
-        ),
-        Configure.NamedVectors.text2vec_openai(
+        Configure.NamedVectors.text2vec_cohere(
             name="chunk_summary",
             source_properties=["chunk_summary"],
             vector_index_config=default_vindex_config,
         ),
     ],
+    generative_config=Configure.Generative.cohere(
+        model="command-r"
+    )
 )
 
 client.close()
