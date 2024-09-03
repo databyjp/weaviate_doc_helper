@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "weaviate-agent-demo"
-version = "0.2.0"
+version = "0.3.0"
 description = "Demo project for sometimes (poorly) generating Python code for Weaviate"
 authors = ["JP Hwang <me@jphwang.com>"]
 license = "MIT"
@@ -20,3 +20,11 @@ pytest = "^8.3.2"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+ask_llm = "weaviate_agent_demo.cli:ask_llm"
+ask_basic_ragbot = "weaviate_agent_demo.cli:ask_basic_ragbot"
+ask_ragbot_with_reformulation = "weaviate_agent_demo.cli:ask_ragbot_with_reformulation"
+ask_ragbot_with_tools = "weaviate_agent_demo.cli:ask_ragbot_with_tools"
+safely_ask_ragbot_with_tools = "weaviate_agent_demo.cli:safely_ask_ragbot_with_tools"
+ask_weaviate_agent = "weaviate_agent_demo.cli:ask_weaviate_agent"
