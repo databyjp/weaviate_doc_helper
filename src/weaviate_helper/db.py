@@ -1,6 +1,7 @@
 # File: src/weaviate_helper/db.py
 import weaviate
 from weaviate import WeaviateClient
+from weaviate.classes.init import Auth
 from weaviate.types import UUID
 import os
 from typing import List, Literal
@@ -11,6 +12,7 @@ from .prompts import SYSTEM_MSGS
 from weaviate.classes.query import Filter
 import logging
 from datetime import datetime, timezone
+import streamlit as st
 
 
 logger = get_logger(__name__)
@@ -18,18 +20,33 @@ logger.setLevel(logging.DEBUG)
 
 
 def connect_to_weaviate() -> WeaviateClient:
-    cohere_apikey = os.environ["COHERE_APIKEY"]
-    openai_apikey = os.environ["OPENAI_APIKEY"]
-
     logger.debug("Connecting to Weaviate...")
-    client = weaviate.connect_to_local(
-        port=8280,
-        grpc_port=50251,
-        headers={
-            "X-Cohere-Api-Key": cohere_apikey,
-            "X-OpenAI-Api-Key": openai_apikey,
-        },
-    )
+
+    if st.secrets.has_key("COHERE_APIKEY"):  # If we are running on Streamlit Cloud
+        cohere_apikey = st.secrets["COHERE_APIKEY"]
+        openai_apikey = st.secrets["OPENAI_APIKEY"]
+        weaviate_url = st.secrets["WEAVIATE_URL"]
+        weaviate_admin_key = st.secrets["WEAVIATE_ADMIN_KEY"]
+
+        client = weaviate.connect_to_weaviate_cloud(
+            cluster_url=weaviate_url,
+            auth_credentials=Auth.api_key(weaviate_admin_key),
+            headers={
+                "X-Cohere-Api-Key": cohere_apikey,
+                "X-OpenAI-Api-Key": openai_apikey,
+            },
+        )
+    else:  # If we are running locally
+        cohere_apikey = os.environ["COHERE_APIKEY"]
+        openai_apikey = os.environ["OPENAI_APIKEY"]
+        client = weaviate.connect_to_local(
+            port=8280,
+            grpc_port=50251,
+            headers={
+                "X-Cohere-Api-Key": cohere_apikey,
+                "X-OpenAI-Api-Key": openai_apikey,
+            },
+        )
     return client
 
 

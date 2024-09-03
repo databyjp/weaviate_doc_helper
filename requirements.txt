@@ -39,4 +39,4 @@ typing_extensions==4.12.2
 urllib3==2.2.2
 validators==0.33.0
 weaviate-client==4.7.1
--e git+ssh://git@github.com/databyjp/weaviate_doc_helper.git@30bc070e11c3ffe7955a526351a5a01addb0865b#egg=weaviate_helper
+git+https://github.com/databyjp/weaviate_doc_helper.git@30bc070e11c3ffe7955a526351a5a01addb0865b#egg=weaviate_helper
