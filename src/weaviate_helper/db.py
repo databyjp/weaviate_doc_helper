@@ -22,7 +22,9 @@ logger.setLevel(logging.DEBUG)
 def connect_to_weaviate() -> WeaviateClient:
     logger.debug("Connecting to Weaviate...")
 
-    if st.secrets.has_key("COHERE_APIKEY"):  # If we are running on Streamlit Cloud
+    st.secrets.load_if_toml_exists()
+
+    if st.secrets.has_key("COHERE_APIKEY"):
         cohere_apikey = st.secrets["COHERE_APIKEY"]
         openai_apikey = st.secrets["OPENAI_APIKEY"]
         weaviate_url = st.secrets["WEAVIATE_URL"]

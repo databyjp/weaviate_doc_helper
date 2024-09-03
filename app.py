@@ -3,15 +3,17 @@ import os
 
 
 # Read the secret from Streamlit's secrets
-cohere_apikey = st.secrets["COHERE_APIKEY"]
-openai_apikey = st.secrets["OPENAI_APIKEY"]
-claude_apikey = st.secrets["ANTHROPIC_API_KEY"]
+st.secrets.load_if_toml_exists()
 
+if st.secrets.has_key("COHERE_APIKEY"):
+    cohere_apikey = st.secrets["COHERE_APIKEY"]
+    openai_apikey = st.secrets["OPENAI_APIKEY"]
+    claude_apikey = st.secrets["ANTHROPIC_API_KEY"]
 
-# Set the secret as an environment variable
-os.environ["COHERE_APIKEY"] = cohere_apikey
-os.environ["OPENAI_APIKEY"] = openai_apikey
-os.environ["ANTHROPIC_API_KEY"] = claude_apikey
+    # Set the secret as an environment variable
+    os.environ["COHERE_APIKEY"] = cohere_apikey
+    os.environ["OPENAI_APIKEY"] = openai_apikey
+    os.environ["ANTHROPIC_API_KEY"] = claude_apikey
 
 
 import claudette
