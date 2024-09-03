@@ -1,4 +1,19 @@
 import streamlit as st
+import os
+
+
+# Read the secret from Streamlit's secrets
+cohere_apikey = st.secrets["COHERE_APIKEY"]
+openai_apikey = st.secrets["OPENAI_APIKEY"]
+claude_apikey = st.secrets["ANTHROPIC_API_KEY"]
+
+
+# Set the secret as an environment variable
+os.environ["COHERE_APIKEY"] = cohere_apikey
+os.environ["OPENAI_APIKEY"] = openai_apikey
+os.environ["ANTHROPIC_API_KEY"] = claude_apikey
+
+
 import claudette
 from anthropic.types import Message
 from anthropic.types.text_block import TextBlock
@@ -11,7 +26,6 @@ from weaviate_helper.utils import _validate_query, _log_claude_to_file
 from weaviate_helper.db import _add_answer_to_cache, _search_multiple
 from weaviate_helper.prompts import SYSTEM_MSGS
 import logging
-from anthropic.types import Message
 
 
 logger = get_logger(__name__)
