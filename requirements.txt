@@ -71,3 +71,4 @@ urllib3==2.2.2 ; python_version >= "3.9" and python_full_version != "3.9.7" and 
 validators==0.33.0 ; python_version >= "3.9" and python_full_version != "3.9.7" and python_version < "4.0"
 watchdog==4.0.2 ; python_version >= "3.9" and python_full_version != "3.9.7" and python_version < "4.0" and platform_system != "Darwin"
 weaviate-client==4.7.1 ; python_version >= "3.9" and python_full_version != "3.9.7" and python_version < "4.0"
+weaviate-agent-demo==0.3.0
