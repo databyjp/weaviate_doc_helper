@@ -7,7 +7,12 @@ import os
 from typing import List, Literal
 import claudette
 from anthropic.types import Message
-from .setup import CLAUDE_MODEL, COLLECTION_NAME_CHUNKS, COLLECTION_NAME_CACHED_ANSWERS, get_logger
+from .setup import (
+    CLAUDE_MODEL,
+    COLLECTION_NAME_CHUNKS,
+    COLLECTION_NAME_CACHED_ANSWERS,
+    get_logger,
+)
 from .prompts import SYSTEM_MSGS
 from weaviate.classes.query import Filter
 import logging
@@ -123,9 +128,15 @@ def _search_generic(query: str, doctype: Literal["code", "text", "any"]) -> List
             filters=filter,
             limit=2,
             alpha=0.5,
-            target_vector="chunk",
-            # target_vector=["chunk_summary", "chunk"],
-            return_properties=["filepath", "chunk", "chunk_no", "doctype", "line_start", "line_end"],
+            target_vector=["chunk_summary", "chunk"],
+            return_properties=[
+                "filepath",
+                "chunk",
+                "chunk_no",
+                "doctype",
+                "line_start",
+                "line_end",
+            ],
         )
     logger.debug(f"Search results: {response}")
     response_text = [_response_obj_to_str(o) for o in response.objects]
@@ -149,7 +160,6 @@ def _search_multiple(queries: List[str]) -> List[str]:
 
 def _add_answer_to_cache(user_query: str, answer: str) -> UUID:
     with connect_to_weaviate() as client:
-
         cached_answers = client.collections.get(COLLECTION_NAME_CACHED_ANSWERS)
 
         logger.debug(f"Inserting the answer for query: {user_query} into cache...")

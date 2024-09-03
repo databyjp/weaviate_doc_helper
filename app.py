@@ -22,7 +22,8 @@ from anthropic.types.text_block import TextBlock
 from weaviate_agent_demo.setup import CLAUDE_MODEL, get_logger
 from weaviate_agent_demo.coder import get_tools
 from weaviate_agent_demo.tools import (
-    _decompose_search_query, _get_weaviate_connection_snippet
+    _decompose_search_query,
+    _get_weaviate_connection_snippet,
 )
 from weaviate_agent_demo.utils import _validate_query, _log_claude_to_file
 from weaviate_agent_demo.db import _add_answer_to_cache, _search_multiple
@@ -57,8 +58,7 @@ if user_query:
         st.write(user_query)
 
     with st.spinner("Validating the query for safety & relevance..."):
-        validity_assessment = _validate_query(user_query
-                                          )
+        validity_assessment = _validate_query(user_query)
     if not validity_assessment["is_valid"]:
         logger.debug(f"Query '{user_query}' is not validated to continue.")
         logger.debug(f"Reason: {validity_assessment['reason']}")
@@ -66,9 +66,13 @@ if user_query:
         st.write(f"Reason: {validity_assessment['reason']}")
     else:
         with st.chat_message("assistant"):
-            st.write(f"Great, the query has been validated as safe & relevant. Continuing.")
+            st.write(
+                f"Great, the query has been validated as safe & relevant. Continuing."
+            )
 
-        with st.spinner(f"Decomposing the query:\n '{user_query}' into sub-queries. Please wait..."):
+        with st.spinner(
+            f"Decomposing the query:\n '{user_query}' into sub-queries. Please wait..."
+        ):
             decomposed_queries = _decompose_search_query(user_query)
 
         with st.chat_message("assistant"):
@@ -126,4 +130,3 @@ if user_query:
         # If a similar query is asked again, we can use the cached results.
         if isinstance(r.content[-1], TextBlock):
             _add_answer_to_cache(user_query, r.content[-1].text)
-

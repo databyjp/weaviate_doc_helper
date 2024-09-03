@@ -210,23 +210,17 @@ def _log_claude_to_file(
                 f.write(f"{block.input}\n")
 
 
-def summarize_snippet(chunk: str) -> str:
+def summarize_snippet(chunk: str, model_name: str = CLAUDE_HAIKU) -> str:
     prompt = f"""
     The user has provided the following snippet, within the "original_snippet" tag:
 
-    Review the original snippet, and provide an explanation of the snippet within an <explanation> tag.
-
-    The explanation should be a paragraph of 2-5 sentences, in plain English.
-    The explanation is to be used to help the user understand the snippet,
-    and to help the user for search for the snippet.
-
-    The explanation should include key terms and concepts that are relevant to the snippet.
+    Review the original snippet, and provide a summary of the snippet within an <summary> tag.
 
     <original_snippet>{chunk}</original_snippet>
     """
 
     chat = claudette.Chat(
-        model=CLAUDE_HAIKU,
+        model=model_name,
         sp=SYSTEM_MSGS.SUMMARIZER.value,
     )
 
@@ -236,6 +230,6 @@ def summarize_snippet(chunk: str) -> str:
         logger.debug(f"Odd, multiple content blocks returned. Response message: {r}")
 
     response_text = r.content[-1].text
-    explanation = response_text.split("<explanation>")[1].split("</explanation>")[0]
+    explanation = response_text.split("<summary>")[1].split("</summary>")[0]
 
     return explanation

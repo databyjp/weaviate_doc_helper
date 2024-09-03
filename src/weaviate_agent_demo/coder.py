@@ -93,7 +93,9 @@ def ask_llm_base(
     prompt = generate_prompt(user_query, use_search, use_reformulation, search_results)
     logger.debug(f"Prompt: {prompt}")
 
-    chat = claudette.Chat(model=CLAUDE_MODEL, sp=system_prompt, tools=get_tools(use_tools))
+    chat = claudette.Chat(
+        model=CLAUDE_MODEL, sp=system_prompt, tools=get_tools(use_tools)
+    )
 
     if use_tools:
         r: Message = chat.toolloop(prompt, max_steps=max_steps)

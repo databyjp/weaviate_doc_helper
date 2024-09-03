@@ -24,9 +24,7 @@ cached_answers = client.collections.create(
             vector_index_config=default_vindex_config,
         ),
     ],
-    generative_config=Configure.Generative.cohere(
-        model="command-r"
-    )
+    generative_config=Configure.Generative.cohere(model="command-r"),
 )
 
 client.close()

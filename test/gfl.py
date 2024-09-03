@@ -1,4 +1,5 @@
 from weaviate_agent_demo.utils import summarize_snippet
+from weaviate_agent_demo.setup import CLAUDE_HAIKU, CLAUDE_SONNET
 
 collection_creation = """
 from weaviate.classes.config import Configure, Property, DataType
@@ -46,5 +47,5 @@ response = jeopardy.query.hybrid(
 )
 """
 
-print(summarize_snippet(collection_creation))
-print(summarize_snippet(hybrid_search_snippet))
+print(summarize_snippet(collection_creation, model_name=CLAUDE_HAIKU))
+print(summarize_snippet(hybrid_search_snippet, model_name=CLAUDE_HAIKU))

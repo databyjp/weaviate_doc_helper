@@ -1,4 +1,4 @@
-from weaviate_helper.db import search_any
+from weaviate_agent_demo.db import search_any
 
 
 assert (
