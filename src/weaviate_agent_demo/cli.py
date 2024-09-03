@@ -1,4 +1,4 @@
-# File: src/weaviate_helper/cli.py
+# File: src/weaviate_agent_demo/cli.py
 import click
 from .coder import ask_llm_base, _ask_weaviate_agent
 from .db import _add_answer_to_cache

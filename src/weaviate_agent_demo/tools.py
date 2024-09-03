@@ -1,4 +1,4 @@
-# File: src/weaviate_helper/tools.py
+# File: src/weaviate_agent_demo/tools.py
 from .db import _search_generic
 from typing import List
 from anthropic.types import Message

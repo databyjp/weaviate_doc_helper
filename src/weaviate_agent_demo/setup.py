@@ -1,4 +1,4 @@
-# Filepath: /src/weaviate_helper/setup.py
+# Filepath: /src/weaviate_agent_demo/setup.py
 from pathlib import Path
 import logging
 from logging.handlers import RotatingFileHandler

@@ -1,4 +1,4 @@
-from weaviate_helper.tools import _decompose_search_query
+from weaviate_agent_demo.tools import _decompose_search_query
 
 
 # print(_decompose_search_query("How do I connect to weaviate, then perform hybrid search with named vectors, then see the scores of the resulting hybrid search?"))

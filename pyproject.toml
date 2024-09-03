@@ -1,20 +1,22 @@
-[build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[project]
-name = "weaviate_helper"
-version = "0.0.1"
+[tool.poetry]
+name = "weaviate-agent-demo"
+version = "0.1.0"
 description = "Demo project for sometimes (poorly) generating Python code for Weaviate"
-authors = [{name = "JP Hwang", email = "me@jphwang.com"}]
+authors = ["JP Hwang <me@jphwang.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "weaviate_agent_demo", from = "src"}]  # Add this line
 
-[project.scripts]
-ask_llm = "weaviate_helper.cli:ask_llm"
-ask_basic_ragbot = "weaviate_helper.cli:ask_basic_ragbot"
-ask_ragbot_with_reformulation = "weaviate_helper.cli:ask_ragbot_with_reformulation"
-ask_ragbot_with_tools = "weaviate_helper.cli:ask_ragbot_with_tools"
-safely_ask_ragbot_with_tools = "weaviate_helper.cli:safely_ask_ragbot_with_tools"
-ask_weaviate_agent = "weaviate_helper.cli:ask_weaviate_agent"
+[tool.poetry.dependencies]
+python = "^3.9"
+weaviate-client = "^4.7.1"
+claudette = "^0.0.9"
+click = "^8.1.7"
+streamlit = "^1.38.0"
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

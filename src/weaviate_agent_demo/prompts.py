@@ -1,4 +1,4 @@
-# File: src/weaviate_helper/prompts.py
+# File: src/weaviate_agent_demo/prompts.py
 from enum import Enum
 
 

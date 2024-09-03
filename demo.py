@@ -1,7 +1,7 @@
 # Filepath: demo.py
-from weaviate_helper.coder import ask_llm_base
-from weaviate_helper.prompts import SYSTEM_MSGS
-from weaviate_helper.setup import get_logger
+from weaviate_agent_demo.coder import ask_llm_base
+from weaviate_agent_demo.prompts import SYSTEM_MSGS
+from weaviate_agent_demo.setup import get_logger
 import logging
 
 

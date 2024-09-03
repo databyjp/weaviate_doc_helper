@@ -1,4 +1,4 @@
-# File: src/weaviate_helper/utils.py
+# File: src/weaviate_agent_demo/utils.py
 from typing import List, Dict, Any
 from dataclasses import dataclass
 from typing import List, Iterable

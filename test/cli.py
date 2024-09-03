@@ -1,6 +1,6 @@
 import pytest
 from click.testing import CliRunner
-from weaviate_helper.cli import (
+from weaviate_agent_demo.cli import (
     ask_llm,
     ask_basic_ragbot,
     ask_ragbot_with_reformulation,

@@ -19,14 +19,14 @@ if st.secrets.has_key("COHERE_APIKEY"):
 import claudette
 from anthropic.types import Message
 from anthropic.types.text_block import TextBlock
-from weaviate_helper.setup import CLAUDE_MODEL, get_logger
-from weaviate_helper.coder import get_tools
-from weaviate_helper.tools import (
+from weaviate_agent_demo.setup import CLAUDE_MODEL, get_logger
+from weaviate_agent_demo.coder import get_tools
+from weaviate_agent_demo.tools import (
     _decompose_search_query, _get_weaviate_connection_snippet
 )
-from weaviate_helper.utils import _validate_query, _log_claude_to_file
-from weaviate_helper.db import _add_answer_to_cache, _search_multiple
-from weaviate_helper.prompts import SYSTEM_MSGS
+from weaviate_agent_demo.utils import _validate_query, _log_claude_to_file
+from weaviate_agent_demo.db import _add_answer_to_cache, _search_multiple
+from weaviate_agent_demo.prompts import SYSTEM_MSGS
 import logging
 
 

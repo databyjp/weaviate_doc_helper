@@ -1,4 +1,4 @@
-# File: src/weaviate_helper/db.py
+# File: src/weaviate_agent_demo/db.py
 import weaviate
 from weaviate import WeaviateClient
 from weaviate.classes.init import Auth

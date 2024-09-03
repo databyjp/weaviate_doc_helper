@@ -1,5 +1,5 @@
-from weaviate_helper.db import connect_to_weaviate
-from weaviate_helper.setup import COLLECTION_NAME_CHUNKS
+from weaviate_agent_demo.db import connect_to_weaviate
+from weaviate_agent_demo.setup import COLLECTION_NAME_CHUNKS
 from weaviate.classes.query import Filter
 
 client = connect_to_weaviate()

@@ -1,4 +1,4 @@
-# Filepath: /src/weaviate_helper/coder.py
+# Filepath: /src/weaviate_agent_demo/coder.py
 import claudette
 from typing import List, Optional
 from anthropic.types import Message

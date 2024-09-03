@@ -1,4 +1,4 @@
-from weaviate_helper.utils import summarize_snippet
+from weaviate_agent_demo.utils import summarize_snippet
 
 collection_creation = """
 from weaviate.classes.config import Configure, Property, DataType

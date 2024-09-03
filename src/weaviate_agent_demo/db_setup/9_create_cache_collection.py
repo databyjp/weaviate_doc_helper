@@ -1,6 +1,6 @@
 from weaviate.classes.config import Property, DataType, Configure
-from weaviate_helper.setup import COLLECTION_NAME_CACHED_ANSWERS
-from weaviate_helper import db
+from weaviate_agent_demo.setup import COLLECTION_NAME_CACHED_ANSWERS
+from weaviate_agent_demo import db
 
 client = db.connect_to_weaviate()
 
