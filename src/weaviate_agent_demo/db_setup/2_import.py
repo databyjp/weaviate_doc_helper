@@ -1,4 +1,5 @@
-from weaviate_agent_demo.utils import get_code_chunks, get_doc_chunks, summarize_snippet
+from weaviate_agent_demo.llm import summarize_snippet
+from weaviate_agent_demo.utils import get_code_chunks, get_doc_chunks
 from weaviate_agent_demo.db import connect_to_weaviate
 from weaviate_agent_demo.setup import COLLECTION_NAME_CHUNKS
 from weaviate.util import generate_uuid5
@@ -35,9 +36,13 @@ with chunks.batch.fixed_size(batch_size=100) as batch:
 
             if not chunks.data.exists(obj_uuid):
                 if c.doctype == "code":
-                    chunk_summary = summarize_snippet(c.chunk)  # Use LLM to summarize the code
+                    chunk_summary = summarize_snippet(
+                        c.chunk
+                    )  # Use LLM to summarize the code
                 else:
-                    chunk_summary = c.chunk[:2048]  # For text, just use the first 2048 characters
+                    chunk_summary = c.chunk[
+                        :2048
+                    ]  # For text, just use the first 2048 characters
 
                 batch.add_object(
                     properties={

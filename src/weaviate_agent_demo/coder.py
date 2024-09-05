@@ -3,15 +3,16 @@ import claudette
 from typing import List, Optional
 from anthropic.types import Message
 from anthropic.types.text_block import TextBlock
+
+from .llm import _decompose_search_query, _formulate_one_search_query, _validate_query
 from .setup import CLAUDE_MODEL, get_logger
 from .tools import (
     _get_weaviate_connection_snippet,
     _search_any,
     _search_code,
     _search_text,
-    _decompose_search_query,
 )
-from .utils import _formulate_one_search_query, _validate_query, _log_claude_to_file
+from .utils import _log_claude_to_file
 from .db import _add_answer_to_cache, _search_multiple
 from .prompts import SYSTEM_MSGS
 import logging
@@ -22,11 +23,7 @@ logger.setLevel(logging.DEBUG)
 
 
 def get_tools(use_tools: bool = True) -> Optional[List[str]]:
-    return (
-        [_search_text, _search_code]
-        if use_tools
-        else None
-    )
+    return [_search_text, _search_code] if use_tools else None
 
 
 def generate_prompt(

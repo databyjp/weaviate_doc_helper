@@ -1,6 +1,8 @@
 import streamlit as st
 import os
 
+from weaviate_agent_demo.llm import _decompose_search_query, _validate_query
+
 
 # Read the secret from Streamlit's secrets
 st.secrets.load_if_toml_exists()
@@ -22,10 +24,9 @@ from anthropic.types.text_block import TextBlock
 from weaviate_agent_demo.setup import CLAUDE_MODEL, get_logger
 from weaviate_agent_demo.coder import get_tools
 from weaviate_agent_demo.tools import (
-    _decompose_search_query,
     _get_weaviate_connection_snippet,
 )
-from weaviate_agent_demo.utils import _validate_query, _log_claude_to_file
+from weaviate_agent_demo.utils import _log_claude_to_file
 from weaviate_agent_demo.db import _add_answer_to_cache, _search_multiple
 from weaviate_agent_demo.prompts import SYSTEM_MSGS
 import hashlib
@@ -40,13 +41,14 @@ logger.setLevel(logging.DEBUG)
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
+
 # Pre-computed hash of the correct password
 # Here to prevent abuse of the deployed app & its api keys
 CORRECT_HASH = "a6d29a66e958a9cba8c068ba38dfcf1ee781f659f5bc9b84cfdcb6fa10198bb3"
 
 
 # Initialize session state for authentication
-if 'authenticated' not in st.session_state:
+if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
 
@@ -61,7 +63,12 @@ def authenticate(password):
 
 # Authentication
 if not st.session_state.authenticated:
-    password = st.text_input("Enter the password", type="password", on_change=authenticate, args=(st.session_state.get("password", ""),))
+    password = st.text_input(
+        "Enter the password",
+        type="password",
+        on_change=authenticate,
+        args=(st.session_state.get("password", ""),),
+    )
     st.button("Login", on_click=authenticate, args=(password,))
 else:
     # Main code block
@@ -77,11 +84,11 @@ else:
 
         return output
 
-
     st.header("Weaviate Helper")
 
-    user_query = st.text_input(label="Can I help you with Weaviate or the Python client V4?")
-
+    user_query = st.text_input(
+        label="Can I help you with Weaviate or the Python client V4?"
+    )
 
     if user_query:
         with st.chat_message("user"):
@@ -139,7 +146,9 @@ else:
                 st.write(system_prompt)
 
             with st.spinner("Asking the AI assistant. Please wait..."):
-                chat = claudette.Chat(model=CLAUDE_MODEL, sp=system_prompt, tools=get_tools())
+                chat = claudette.Chat(
+                    model=CLAUDE_MODEL, sp=system_prompt, tools=get_tools()
+                )
                 r: Message = chat.toolloop(prompt, max_steps=5)
 
             with st.chat_message("assistant"):

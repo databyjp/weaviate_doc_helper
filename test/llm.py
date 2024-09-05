@@ -1,4 +1,5 @@
-from weaviate_agent_demo.utils import _formulate_one_search_query, _validate_query
+from weaviate_agent_demo.llm import _formulate_one_search_query
+from weaviate_agent_demo.llm import _validate_query
 
 
 # print(_get_search_query("How do I connect to Weaviate and perform a hybrid search?"))

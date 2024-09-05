@@ -1,12 +1,7 @@
 # File: src/weaviate_agent_demo/tools.py
 from .db import _search_generic
 from typing import List
-from anthropic.types import Message
-from anthropic.types.text_block import TextBlock
-from anthropic.types.tool_use_block import ToolUseBlock
-from .setup import CLAUDE_MODEL, get_logger
-from .prompts import SYSTEM_MSGS
-import claudette
+from .setup import get_logger
 import logging
 
 
@@ -134,43 +129,3 @@ def _search_any(query: str) -> List[str]:
     """
     logger.debug(f"Running `_search_any` for {query}")
     return _search_generic(query, "any")
-
-
-def _decompose_search_query(user_query: str) -> List[str]:
-    """
-    Decompose a query into a list of sub-queries.
-    This can be useful where a search query may comprise multiple ideas or concepts.
-    Then, you can perform a search for each sub-query, and combine the results.
-
-    Args:
-        query: The query string.
-    Returns:
-        A list of smaller, more focused queries.
-    """
-    prompt = f"""
-    The user want the following question to be answered.
-    <user_query>{user_query}</user_query>
-    We want to perform searches to find related documentation and code snippets.
-    Would we be better served by searching for multiple, more focused queries?
-
-    If so, please provide a list of sub-queries.
-    """
-
-    chat = claudette.Chat(
-        model=CLAUDE_MODEL,
-        sp=SYSTEM_MSGS.SEARCH_QUERY_DECOMPOSER.value,
-        tools=[_format_decomposed_query],
-    )
-
-    r: Message = chat(prompt)
-
-    for block in r.content:
-        if isinstance(block, TextBlock):
-            logger.debug(f"TextBlock: {block.text}")
-        elif isinstance(block, ToolUseBlock):
-            logger.debug(f"Using tool: {block.name}")
-            logger.debug(f"Tool input: {block.input}")
-            return block.input["queries"]
-
-    logger.debug("No tool use block found, returning the original query.")
-    return [user_query]

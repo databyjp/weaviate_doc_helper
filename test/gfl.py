@@ -1,4 +1,4 @@
-from weaviate_agent_demo.utils import summarize_snippet
+from weaviate_agent_demo.llm import summarize_snippet
 from weaviate_agent_demo.setup import CLAUDE_HAIKU, CLAUDE_SONNET
 
 collection_creation = """

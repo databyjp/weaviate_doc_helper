@@ -161,9 +161,9 @@ class EXAMPLE_USER_QUERIES(Enum):
     CONNECT_AND_RUN_HYBRID_SEARCH = """
     How do I connect to a local Weaviate instance, and run a hybrid search, with the v4 Python client API?
     """
-    MULTI_STEP_WEAVIATE_QUERY = """
-    How do I connect to a local Weaviate instance and set up a multi-tenant collection with the ollama vectorizer and an openai generative module? Then how can I run a hybrid search on the collection and see the search result scores? Also, how do the hybrid search results get combined together? The examples should use the v4 Python client API.
-    """
     COMPLEX_WEAVIATE_QUERY = """
     How do I perform a hybrid search with multiple filters, combining timestamps and property filters?
+    """
+    MULTI_STEP_WEAVIATE_QUERY = """
+    How do I connect to a local Weaviate instance and set up a multi-tenant collection with the ollama vectorizer and an openai generative module? Then how can I run a hybrid search on the collection and see the search result scores? Also, how do the hybrid search results get combined together? The examples should use the v4 Python client API.
     """
