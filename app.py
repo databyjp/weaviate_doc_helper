@@ -26,10 +26,10 @@ from weaviate_agent_demo.coder import get_tools
 from weaviate_agent_demo.tools import (
     _get_weaviate_connection_snippet,
 )
-from weaviate_agent_demo.utils import _log_claude_to_file
+from weaviate_agent_demo.utils import _log_claude_to_file, hash_password
 from weaviate_agent_demo.db import _add_answer_to_cache, _search_multiple
 from weaviate_agent_demo.prompts import SYSTEM_MSGS
-import hashlib
+
 import logging
 
 
@@ -37,14 +37,9 @@ logger = get_logger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-# Function to hash the password
-def hash_password(password):
-    return hashlib.sha256(password.encode()).hexdigest()
-
-
 # Pre-computed hash of the correct password
 # Here to prevent abuse of the deployed app & its api keys
-CORRECT_HASH = "a6d29a66e958a9cba8c068ba38dfcf1ee781f659f5bc9b84cfdcb6fa10198bb3"
+CORRECT_HASH = "b6667687509a08e75408728d896fb9465913bb32456844bcfa9f5815f62cd91f"
 
 
 # Initialize session state for authentication

@@ -2,6 +2,7 @@
 from typing import List
 from dataclasses import dataclass
 from typing import List, Iterable
+import hashlib
 from pathlib import Path
 from anthropic.types.text_block import TextBlock
 from anthropic.types.tool_use_block import ToolUseBlock
@@ -145,3 +146,7 @@ def _log_claude_to_file(
                 f.write(f"{block.type}\n")
                 f.write(f"{block.name}\n")
                 f.write(f"{block.input}\n")
+
+
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
