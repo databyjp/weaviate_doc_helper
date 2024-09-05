@@ -54,10 +54,12 @@ def authenticate(password):
         st.rerun()
     else:
         st.error("Incorrect password. Please try again.")
+    return
 
 
 # Authentication
-if not st.session_state.authenticated:
+# Only show the password prompt if the user is not authenticated and not running locally
+if not st.session_state.authenticated and "jphwang" not in os.getcwd():
     password = st.text_input(
         "Enter the password",
         type="password",
