@@ -169,3 +169,6 @@ else:
             # If a similar query is asked again, we can use the cached results.
             if isinstance(r.content[-1], TextBlock):
                 _add_answer_to_cache(user_query, r.content[-1].text)
+
+    st.subheader("App Overview")
+    st.image("assets/app_diagram.png", use_column_width=True)
