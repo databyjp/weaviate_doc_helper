@@ -63,7 +63,7 @@ if not st.session_state.authenticated and "jphwang" not in os.getcwd():
     password = st.text_input(
         "Enter the password",
         type="password",
-        on_change=authenticate,
+        autocomplete="off",
         args=(st.session_state.get("password", ""),),
     )
     st.button("Login", on_click=authenticate, args=(password,))
@@ -83,8 +83,9 @@ else:
 
     st.header("Weaviate Helper")
 
-    user_query = st.text_input(
-        label="Can I help you with Weaviate or the Python client V4?"
+    user_query = st.text_area(
+        label="Can I help you with Weaviate or the Weaviate Python client V4?",
+        height=120,
     )
 
     if user_query:
