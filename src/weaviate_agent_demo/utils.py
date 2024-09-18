@@ -7,7 +7,7 @@ from pathlib import Path
 from anthropic.types.text_block import TextBlock
 from anthropic.types.tool_use_block import ToolUseBlock
 from .setup import CLAUDE_MODEL, get_logger, CLAUDE_LOGFILE
-from .tools import _format_decomposed_query
+from .llm_tools import _format_decomposed_query
 from datetime import datetime
 import logging
 

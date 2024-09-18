@@ -5,7 +5,7 @@ from anthropic.types.text_block import TextBlock
 from anthropic.types.tool_use_block import ToolUseBlock
 from weaviate_agent_demo.prompts import SYSTEM_MSGS
 from weaviate_agent_demo.setup import CLAUDE_HAIKU, CLAUDE_MODEL, get_logger
-from weaviate_agent_demo.tools import (
+from weaviate_agent_demo.llm_tools import (
     _format_decomposed_query,
     _format_query,
     _format_query_validity,

@@ -23,7 +23,7 @@ from anthropic.types import Message
 from anthropic.types.text_block import TextBlock
 from weaviate_agent_demo.setup import CLAUDE_MODEL, get_logger
 from weaviate_agent_demo.coder import get_tools
-from weaviate_agent_demo.tools import (
+from weaviate_agent_demo.llm_tools import (
     _get_weaviate_connection_snippet,
 )
 from weaviate_agent_demo.utils import _log_claude_to_file, hash_password

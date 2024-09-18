@@ -6,7 +6,7 @@ from anthropic.types.text_block import TextBlock
 
 from .llm import _decompose_search_query, _formulate_one_search_query, _validate_query
 from .setup import CLAUDE_MODEL, get_logger
-from .tools import (
+from .llm_tools import (
     _get_weaviate_connection_snippet,
     _search_any,
     _search_code,

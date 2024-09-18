@@ -29,7 +29,7 @@ def connect_to_weaviate() -> WeaviateClient:
 
     st.secrets.load_if_toml_exists()
 
-    if st.secrets.has_key("COHERE_APIKEY"):
+    if st.secrets.has_key("COHERE_APIKEY") and "jphwang" not in os.getcwd():
         cohere_apikey = st.secrets["COHERE_APIKEY"]
         openai_apikey = st.secrets["OPENAI_APIKEY"]
         weaviate_url = st.secrets["WEAVIATE_URL"]
